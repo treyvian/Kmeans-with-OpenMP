@@ -12,15 +12,21 @@ struct point {
 
 typedef struct point point;
 
-void point_in(point *p, double x, double y){
+point *point_in(double x, double y){
+    point *p = (point *)malloc(sizeof(point));
     p->x = x;
     p->y = y;
     p->cluster = -1;
     p->minDist = __DBL_MAX__;
+    return p;
 }
 
 double distance(point p1, point p2){
     return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y);
+}
+
+void print(point *p){
+    printf("(%f,%f)\n", p->x, p->y);
 }
 
 void read_csv(int row, int col, char *filename, int **data){
@@ -47,12 +53,11 @@ void read_csv(int row, int col, char *filename, int **data){
 }
 
 
-int main(int argc, char const *argv[]){
-    point p1, p2; 
-    point_in(&p1, 0.0, 0.0);
-    point_in(&p2, 3.0, 4.0);
+void kMeansClustering(point *points, int epochs, int k){
 
-    printf("%f\n", distance(p1,p2));
+}
+
+int main(int argc, char const *argv[]){
 
     // Reading the csv file
     if (argc < 3){
@@ -72,26 +77,27 @@ int main(int argc, char const *argv[]){
 
 	read_csv(row, col, fname, dat);
 
-    int **data;
-    data = (int **)malloc((row-1) * sizeof(int *));
-	for (int i = 0; i < row; ++i){
-		data[i] = (int *)malloc(2 * sizeof(int));
-	}
+    point *data;
+    data = (point *)malloc((row) * sizeof(point));
 
     for(int i = 0; i < row; i++){
-        for(int j=0; j < col; j++){
-            if(j > 2)
-                data[i][j-3] = dat[i][j];
-        }
+        data[i] = *point_in(dat[i][3], dat[i][4]);
     }
 
-
-    for(int i = 1; i < row-1; i++){
-        for(int j=0; j < 2; j++){
-            printf("%d\t", data[i][j]);
-        }
-        printf("\n"); 
+    // freeing memory for the array dat
+    for (int i=0; i < row; i++) {
+        free(dat[i]);
     }
+    free(dat);
+
+
+    for(int i = 1; i < row; i++){
+        print(&data[i]);
+    }
+     
+
+    // Freeing memory for the array data
+    free(data);
 
     return 0;
 }
