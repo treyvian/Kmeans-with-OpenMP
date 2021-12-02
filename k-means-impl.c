@@ -53,8 +53,30 @@ void read_csv(int row, int col, char *filename, int **data){
 }
 
 
-void kMeansClustering(point *points, int epochs, int k){
+void kMeansClustering(point *points, const int n, int epochs, int k){
+    point *centroids = (point *)malloc(k * sizeof(point));
+    srand(time(0));
+    for (int i = 0; i < k; ++i) {
+        centroids[i] = points[(rand() % n)];
+    }
 
+    for (int i=0; i<k; i++){
+        print(&centroids[i]);
+    }
+
+    for (int i=0; i<k; i++){
+        int cluster_id = i+1;
+
+        for (int j=0; j<n; j++){
+            double dist = distance(centroids[i], points[j]);
+            if (dist < points[i].minDist){
+                points[i].minDist = dist;
+                points[i].cluster = cluster_id;
+            }
+        }
+    }
+
+    
 }
 
 int main(int argc, char const *argv[]){
@@ -84,6 +106,8 @@ int main(int argc, char const *argv[]){
         data[i] = *point_in(dat[i][3], dat[i][4]);
     }
 
+    const size_t data_size = row;
+
     // freeing memory for the array dat
     for (int i=0; i < row; i++) {
         free(dat[i]);
@@ -91,10 +115,7 @@ int main(int argc, char const *argv[]){
     free(dat);
 
 
-    for(int i = 1; i < row; i++){
-        print(&data[i]);
-    }
-     
+    kMeansClustering(data, data_size, 5, 5);
 
     // Freeing memory for the array data
     free(data);
