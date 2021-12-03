@@ -53,36 +53,89 @@ void read_csv(int row, int col, char *filename, int **data){
 }
 
 
-void kMeansClustering(point *points, const int n, int epochs, int k){
+void kMeansClustering(point *points, const int n, const int epochs, const int k){
     point *centroids = (point *)malloc(k * sizeof(point));
     srand(time(0));
     for (int i = 0; i < k; ++i) {
         centroids[i] = points[(rand() % n)];
     }
 
-    for (int i=0; i<k; i++){
-        print(&centroids[i]);
-    }
+    for (int t = 0; t<epochs; t++) {
+        
+        for (int i=0; i<k; i++) {
+            int cluster_id = i;
 
-    for (int i=0; i<k; i++){
-        int cluster_id = i+1;
-
-        for (int j=0; j<n; j++){
-            double dist = distance(centroids[i], points[j]);
-            if (dist < points[i].minDist){
-                points[i].minDist = dist;
-                points[i].cluster = cluster_id;
+            for (int j=0; j<n; j++) {
+                double dist = distance(centroids[i], points[j]);
+                if (dist < points[j].minDist){
+                    points[j].minDist = dist;
+                    points[j].cluster = cluster_id;
+                }
             }
         }
-    }
 
-    
+        //for (int i=0; i<n; i++){
+        //    printf("%f - %d\n",points[i].minDist, points[i].cluster);
+        //}
+
+        int *nPoints = (int *)malloc(k * sizeof(int));
+        double *sumX = (double *)malloc(k * sizeof(double)); 
+        double *sumY = (double *)malloc(k * sizeof(double));
+
+        // Initialise with zeroes
+        for (int j = 0; j < k; ++j) {
+            nPoints[j] = 0;
+            sumX[j] = 0.0;
+            sumY[j] = 0.0;
+        }
+
+        // Iterate over points to append data to centroids
+        for (int i=0; i<n; i++) {
+            int cluster_id = points[i].cluster;
+            nPoints[cluster_id] += 1;
+            sumX[cluster_id] += points[i].x; 
+            sumY[cluster_id] += points[i].y;
+        
+            points[i].minDist = __DBL_MAX__;
+        }
+
+        // Compute new centroids
+        for (int i=0; i<k; ++i) {
+            int cluster_id = i;
+            centroids[i].x = sumX[cluster_id]/nPoints[cluster_id];
+            centroids[i].y = sumY[cluster_id]/nPoints[cluster_id];
+        }
+    }
 }
 
-int main(int argc, char const *argv[]){
+
+void create_marks_csv(char *filename, point *points,int n){
+ 
+    printf("Creating %s.csv file\n",filename);
+    
+    FILE *fp;
+    
+    //filename = strcat(filename,".csv");
+
+    fp=fopen(filename,"w+");
+
+    fprintf(fp,"X,Y,Cluster\n");
+    
+    for (int i=0;i<n;i++) {
+    
+        fprintf(fp,"%f,%f,%d\n", points[i].x, points[i].y, points[i].cluster);
+    }    
+    
+    fclose(fp);
+    
+    printf("\n %sfile created\n",filename);
+}
+ 
+
+int main (int argc, char const *argv[]) {
 
     // Reading the csv file
-    if (argc < 3){
+    if (argc < 3) {
 		printf("Please specify the CSV file as an input.\n");
 		exit(0);
 	}
@@ -102,7 +155,7 @@ int main(int argc, char const *argv[]){
     point *data;
     data = (point *)malloc((row) * sizeof(point));
 
-    for(int i = 0; i < row; i++){
+    for (int i = 0; i < row; i++) {
         data[i] = *point_in(dat[i][3], dat[i][4]);
     }
 
@@ -115,8 +168,17 @@ int main(int argc, char const *argv[]){
     free(dat);
 
 
-    kMeansClustering(data, data_size, 5, 5);
+    kMeansClustering(data, data_size, 100, 5);
 
+    printf("prova");
+
+    char *name = "output.csv";
+
+    create_marks_csv(name,data,data_size);
+
+    
+
+    
     // Freeing memory for the array data
     free(data);
 
