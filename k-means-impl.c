@@ -13,35 +13,44 @@ typedef struct point {
 } point;
 
 
-point *point_in (double *x, int dimensions) {
-    point *p = (point *)malloc(sizeof(point));
-    if (p) {
-        p->x = x;
-        p->dimensions = dimensions;
-        p->cluster = -1;
-        p->minDist = __DBL_MAX__;
-    }
-    return p;
+int point_init (point *p, double *x, int dimensions) {
+    
+    if (p == NULL)
+        return -1;
+
+    p->x = x;
+    p->dimensions = dimensions;
+    p->cluster = -1;
+    p->minDist = __DBL_MAX__;
+    
+    return 0;
 }
 
-double distance (point *p1, point *p2) {
-    double dist;
-    
-    for (int i=0; i< p1->dimensions; i++) {
-        dist += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
+double distance (point p1, point p2) {
+    double dist = 0;
+
+    for (int i = 0; i < p1.dimensions; i++) {
+        dist += (p2.x[i] - p1.x[i]) * (p2.x[i] - p1.x[i]);
     }
     
     return sqrt(dist);
 }
 
 void print_point (point *p) {
-    printf("(");
-    
-    for (int i=0; i < p->dimensions; i++) {
-        printf("%f ", p->x[i]);
-    }
 
-    printf(")\n");
+    if(p == NULL){
+        printf("Pointer is null");
+        
+    } else {
+
+        printf("(");
+    
+        for (int i=0; i < p->dimensions; i++) {
+            printf("%f ", p->x[i]);
+        }
+
+        printf(")\n");
+    }
 }
 
 void read_csv (int row, int col, char *filename, int **data) {
@@ -74,13 +83,16 @@ void kMeansClustering (point *points,
                         const int epochs, 
                         const int k) {
 
+    if (points == NULL){
+        exit;
+    }
+    
     point *centroids = (point *)malloc(k * sizeof(point));
     srand(time(0));
     for (int i = 0; i < k; ++i) {
         centroids[i] = points[rand() % n];
     }
     
-
     int *nPoints = (int *)malloc(k * sizeof(int));
     double **sum = (double **)malloc(k * sizeof(double *));
     for (int i = 0; i < k; ++i) {
@@ -88,20 +100,21 @@ void kMeansClustering (point *points,
 	}
     
     for (int t = 0; t<epochs; t++) {
-        
-        for (int i=0; i<k; i++) {
-            int cluster_id = i;
+        double dist;
+        int cluster_id;
+        for (int i = 0; i < k; ++i) {
+            cluster_id = i;
 
-            for (int j=0; j<n; j++) {
-                double dist = distance(&centroids[i], &points[j]);
-                
+            for (int j = 0; j < n; j++) {
+                dist = distance(centroids[i], points[j]);
+        
                 if (dist < points[j].minDist) {
                     points[j].minDist = dist;
                     points[j].cluster = cluster_id;
                 }
             }
         }
-
+    
         // Initialise with zeroes
         for (int j = 0; j < k; ++j) {
             nPoints[j] = 0;
@@ -131,7 +144,6 @@ void kMeansClustering (point *points,
                 //printf("%f ", centroids[i].x[j]);
             }
         }
-        printf("\n");
     }
 }
 
@@ -146,7 +158,14 @@ void create_marks_csv(char *filename, point *points,int n){
 
     fp=fopen(filename,"w+");
 
-    fprintf(fp,"X,Y,Cluster\n");  
+    fprintf(fp,"X,Y,Cluster\n"); 
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < points->dimensions; ++j) {
+            fprintf(fp,"%f,", points[i].x[j]);
+        }
+        fprintf(fp,"%d\n", points[i].cluster);
+    }   
     
     fclose(fp);
     
@@ -174,29 +193,36 @@ int main (int argc, char const *argv[]) {
 
 	read_csv(row, col, fname, dat);
 
-    const size_t data_size = row;
-
-    point *data = (point *)malloc(data_size * sizeof(point));
-
-    double *p = (double *)malloc(2 * sizeof(double));
-
-    for (int i = 0; i < data_size; ++i) { 
-        p[0] = (double) dat[i][3];
-        p[1] = (double) dat[i][4];
-        data[i] = *point_in(p, 2);
-    }
     
+
+    point *data = (point *)malloc((row - 1) * sizeof(point));
+
+    double *x;
+
+    for (int i = 1; i < row; ++i) {
+        x = (double *)malloc(2 * sizeof(double)); 
+        x[0] = (double) dat[i][3];
+        x[1] = (double) dat[i][4];
+        point_init(&data[i-1], x, 2);
+    }
+
+    const size_t data_size = row-1;
+     
+    // for (int i = 0; i < data_size; i++) {
+    //     print_point(&data[i]);
+    // }
+
     // freeing memory for the array dat
     for (int i=0; i < data_size; i++) {
         free(dat[i]);
     }
     free(dat);
     
-    // kMeansClustering(data, data_size, 100, 5);
+    kMeansClustering(data, data_size, 100, 5);
 
-    // char *name = "output.csv";
+    char *name = "output.csv";
 
-    // create_marks_csv(name,data,data_size);
+    create_marks_csv(name,data,data_size);
 
     
 
