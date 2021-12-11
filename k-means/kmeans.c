@@ -1,34 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "k-means.h"
-
-
-void read_csv (int row, int col, char *filename, int **data) {
-	
-    FILE *file;
-	file = fopen (filename, "r") ;
-
-	int i = 0;
-    char line[4098];
-	while (fgets(line, 4098, file) && (i < row))
-    {
-    	// double row[ssParams->nreal + 1];
-        char* tmp = strdup(line);
-
-	    int j = 0;
-	    const char* tok;
-	    for (tok = strtok(line, ","); tok && *tok; j++, tok = strtok(NULL, ","))
-	    {
-	        data[i][j] = atof(tok);
-	    }
-
-        free(tmp);
-        i++;
-    }
-}
+#include "kmeans.h"
 
 
 void kMeansClustering (point *points, 
@@ -37,7 +11,7 @@ void kMeansClustering (point *points,
                         const int k) {
 
     if (points == NULL){
-        exit;
+        printf("Missing input data");
     }
     
     point *centroids = (point *)malloc(k * sizeof(point));
@@ -98,30 +72,5 @@ void kMeansClustering (point *points,
             }
         }
     }
-}
-
-
-void create_marks_csv(char *filename, point *points,int n){
- 
-    printf("Creating %s.csv file\n",filename);
-    
-    FILE *fp;
-    
-    //filename = strcat(filename,".csv");
-
-    fp=fopen(filename,"w+");
-
-    fprintf(fp,"X,Y,Cluster\n"); 
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < points->dimensions; ++j) {
-            fprintf(fp,"%f,", points[i].x[j]);
-        }
-        fprintf(fp,"%d\n", points[i].cluster);
-    }   
-    
-    fclose(fp);
-    
-    printf("\n %sfile created\n",filename);
 }
  
