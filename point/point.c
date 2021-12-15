@@ -7,7 +7,7 @@ void point_init (point *p, double *x, int dimensions) {
     
     if (p == NULL){
         printf("null pointer to the init function\n");   
-        return;
+        exit(1);
     }
 
     p->x = x;
@@ -29,7 +29,7 @@ double distance (point p1, point p2) {
 void copy_point (point *o, point *p) {
     if (o == NULL || p == NULL) {
         printf("null pointer in copy method\n");
-        return;
+        exit(1);
     }
 
     p->x = (double *)malloc(o->dimensions * sizeof(double));
@@ -77,4 +77,8 @@ void print_point (point *p) {
 
         printf(")\n");
     }
+}
+
+void delete_x (point *p) {
+    free(p -> x);
 }

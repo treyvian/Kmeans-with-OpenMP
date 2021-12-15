@@ -12,8 +12,7 @@ void read_csv (int row, int col, char *filename, int **data) {
 
 	int i = 0;
     char line[4098];
-	while (fgets(line, 4098, file) && (i < row))
-    {
+	while (fgets(line, 4098, file) && (i < row)) {
     	// double row[ssParams->nreal + 1];
         char* tmp = strdup(line);
 
@@ -61,9 +60,10 @@ int main (int argc, char const *argv[]) {
 		exit(0);
 	}
 
-	int row     = atoi(argv[1]);
-	int col     = atoi(argv[2]);
-	char fname[256];	strcpy(fname, argv[3]);
+	int row = atoi(argv[1]);
+	int col = atoi(argv[2]);
+	char fname[256];	
+    strcpy(fname, argv[3]);
 
 	int **dat;
 	dat = (int **)malloc(row * sizeof(int *));
@@ -103,11 +103,12 @@ int main (int argc, char const *argv[]) {
     char *name = "output.csv";
 
     create_marks_csv(name,data,data_size);
-
-    
-
     
     // Freeing memory for the array data
+
+    for (int i = 0; i < data_size; ++i) {
+        delete_x(&data[i]);
+    }
     free(data);
 
     return 0;

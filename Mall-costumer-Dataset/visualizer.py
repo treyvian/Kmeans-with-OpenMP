@@ -5,7 +5,6 @@ import seaborn as sns
 
 plt.figure()
 df = pd.read_csv("output.csv",sep=',')
-print(df['Y'])
 sns.scatterplot(x=df.X, y=df.Y, 
                 hue=df.Cluster, 
                 palette=sns.color_palette("hls", n_colors=5))

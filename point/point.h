@@ -12,11 +12,12 @@ void point_init (point*, double*, int);
 
 double distance (point, point);
 
-void copy_point (point *o, point *p);
+void copy_point (point *, point *);
 
 int equals (point *, point *);
 
-void print_point (point *p);
+void print_point (point *);
 
+void delete_x(point *);
 
 #endif

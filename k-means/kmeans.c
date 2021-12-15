@@ -12,13 +12,14 @@ void kMeansClustering (point *points,
 
     if (points == NULL){
         printf("Missing input data");
+        exit(1);
     }
     
     point *centroids = (point *)malloc(k * sizeof(point));
 
     srand(time(0));
     for (int i = 0; i < k; ++i) {
-        centroids[i] = points[rand() % n];
+        copy_point(&points[rand() % n], &centroids[i]);
     }
     
     int *nPoints = (int *)malloc(k * sizeof(int));
@@ -34,6 +35,8 @@ void kMeansClustering (point *points,
 
         double dist;
         int cluster_id;
+
+        // Updating the distance of each point with respect to the current centroids
 
         for (int i = 0; i < k; ++i) {
             cluster_id = i;
@@ -78,6 +81,7 @@ void kMeansClustering (point *points,
             int nP = nPoints[i];
 
             for (int j = 0; j<centroids->dimensions; j++) {
+                
                 if (centroids[i].x[j] != sum[i][j]/nP) {
                     bool = 0;
                     centroids[i].x[j] = sum[i][j]/nP;
@@ -86,12 +90,39 @@ void kMeansClustering (point *points,
         }
 
         if (bool) {
+            // Freeing points, sum and centroids
+            free(nPoints);
+
+            for (int i = 0; i < k; ++i) {
+                free(sum[i]);
+            }
+            free(sum);
+
+            for (int i = 0; i < k; ++i) {
+                delete_x(&centroids[i]);
+            }
+            free(centroids);
+
             printf("Number of iterations: %d\n", iter);
             return;
         }
 
         iter = t;
     }
-    printf("%d\n", iter);
+
+    printf("Number of iterations: %d\n", iter);
+
+    // Freeing points, sum and centroids
+    free(nPoints);
+
+    for (int i = 0; i < k; ++i) {
+        free(sum[i]);
+    }
+    free(sum);
+
+    for (int i = 0; i < k; ++i) {
+        delete_x(&centroids[i]);
+    }
+    free(centroids);
 }
  

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Compiling with make file
+make
+
+read -p 'execute with Valgrind ? [y/N]:' choice
+
+if [[ "$choice" == 'y' ]]; then
+    # Executing code
+    valgrind --leak-check=full ./output 201 5 Mall_Customers.csv -s
+else
+    ./output 201 5 Mall_Customers.csv
+fi
+
+read -p 'visualize the results ? [y/N]:' ans
+
+if [[ $ans == "y" ]]; then
+    # Visualizing results
+    python visualizer.py
+fi
