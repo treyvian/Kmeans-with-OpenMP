@@ -8,8 +8,14 @@ typedef struct point {
     double minDist;
 } point;
 
-int point_init (point*, double*, int);
+void point_init (point*, double*, int);
+
 double distance (point, point);
+
+void copy_point (point *o, point *p);
+
+int equals (point *, point *);
+
 void print_point (point *p);
 
 

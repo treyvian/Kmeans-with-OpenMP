@@ -15,6 +15,7 @@ void kMeansClustering (point *points,
     }
     
     point *centroids = (point *)malloc(k * sizeof(point));
+
     srand(time(0));
     for (int i = 0; i < k; ++i) {
         centroids[i] = points[rand() % n];
@@ -22,13 +23,18 @@ void kMeansClustering (point *points,
     
     int *nPoints = (int *)malloc(k * sizeof(int));
     double **sum = (double **)malloc(k * sizeof(double *));
+
     for (int i = 0; i < k; ++i) {
 	    sum[i] = (double *)malloc(points->dimensions * sizeof(double));
 	}
     
+    int iter;
+
     for (int t = 0; t<epochs; t++) {
+
         double dist;
         int cluster_id;
+
         for (int i = 0; i < k; ++i) {
             cluster_id = i;
 
@@ -61,16 +67,31 @@ void kMeansClustering (point *points,
 
             points[i].minDist = __DBL_MAX__;
         }
+        /*
+            Boolean variable used to stop the loop in case there 
+            is no improvement in the new centroids
+        */
+        int bool = 1;
 
         // Compute new centroids
         for (int i=0; i<k; ++i) {
             int nP = nPoints[i];
 
             for (int j = 0; j<centroids->dimensions; j++) {
-                centroids[i].x[j] = sum[i][j]/nP;
-                //printf("%f ", centroids[i].x[j]);
+                if (centroids[i].x[j] != sum[i][j]/nP) {
+                    bool = 0;
+                    centroids[i].x[j] = sum[i][j]/nP;
+                }    
             }
         }
+
+        if (bool) {
+            printf("Number of iterations: %d\n", iter);
+            return;
+        }
+
+        iter = t;
     }
+    printf("%d\n", iter);
 }
  
