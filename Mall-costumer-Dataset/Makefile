@@ -2,5 +2,5 @@ output: main.c ../k-means/kmeans.c ../k-means/kmeans.h ../point/point.c ../point
 	gcc -o output main.c ../k-means/kmeans.c ../point/point.c
 
 clean:
-	rm *.o output
+	rm output
 

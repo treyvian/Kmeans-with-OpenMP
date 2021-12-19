@@ -7,10 +7,12 @@ read -p 'execute with Valgrind ? [y/N]:' choice
 
 if [[ "$choice" == 'y' ]]; then
     # Executing code
-    valgrind --leak-check=full ./output 201 5 Mall_Customers.csv 5 -s
+    valgrind --leak-check=full --show-leak-kinds=all ./output 201 5 Mall_Customers.csv 5 -s
 else
     ./output 201 5 Mall_Customers.csv 5
 fi
+
+make clean
 
 read -p 'visualize the results ? [y/N]:' ans
 

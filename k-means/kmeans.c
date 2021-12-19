@@ -9,10 +9,15 @@ void kMeansClustering (point *points,
                         const int n, 
                         const int epochs, 
                         const int k) {
-
+    
     if (points == NULL){
-        printf("Missing input data");
-        exit(1);
+        perror("Missing input data");
+        exit(-1);
+    }
+
+    if (epochs <= 0) {
+        perror("Number of epochs not correct");
+        exit(-1);
     }
     
     point *centroids = (point *)malloc(k * sizeof(point));
@@ -30,19 +35,18 @@ void kMeansClustering (point *points,
 	}
     
     int iter;
-
+    
     for (int t = 0; t<epochs; t++) {
-
         double dist;
         int cluster_id;
 
         // Updating the distance of each point with respect to the current centroids
-
+    
         for (int i = 0; i < k; ++i) {
             cluster_id = i;
 
             for (int j = 0; j < n; j++) {
-                dist = distance(centroids[i], points[j]);
+                dist = distance(&centroids[i], &points[j]);
         
                 if (dist < points[j].minDist) {
                     points[j].minDist = dist;
@@ -50,7 +54,7 @@ void kMeansClustering (point *points,
                 }
             }
         }
-    
+
         // Initialise with zeroes
         for (int j = 0; j < k; ++j) {
             nPoints[j] = 0;
@@ -58,18 +62,20 @@ void kMeansClustering (point *points,
                 sum[j][i] = 0.0;
             }    
         }
-        
+    
         // Iterate over points to append data to centroids
+        int cluster_num;
         for (int i=0; i<n; i++) {
-            int cluster_id = points[i].cluster;
-            nPoints[cluster_id] += 1;
+            cluster_num = points[i].cluster;
+            ++nPoints[cluster_num];
             
             for (int j = 0; j < points->dimensions; ++j) {
-                sum[cluster_id][j] += points[i].x[j]; 
+                sum[cluster_num][j] += points[i].x[j]; 
             }
-
+            
             points[i].minDist = __DBL_MAX__;
         }
+
         /*
             Boolean variable used to stop the loop in case there 
             is no improvement in the new centroids
@@ -111,7 +117,6 @@ void kMeansClustering (point *points,
     }
 
     printf("Number of iterations: %d\n", iter);
-
     // Freeing points, sum and centroids
     free(nPoints);
 
@@ -127,7 +132,7 @@ void kMeansClustering (point *points,
 }
 
 
-int silhouette_score (point *data, int n) {
+double silhouette_score (point *data, int n) {
     double Cohesion;
     int n_coh;
     double Separation;
@@ -144,19 +149,20 @@ int silhouette_score (point *data, int n) {
         
         for (int j = 0; j < n; ++j) {
             if (cluster_number == data[j].cluster) {
-                Cohesion += distance(data[i], data[j]);
+                Cohesion += distance(&data[i], &data[j]);
                 ++n_coh;
             } else {
-                Separation += distance(data[i], data[j]);
+                Separation += distance(&data[i], &data[j]);
                 ++n_sep;
             }
         }
 
-        if (Separation > Cohesion) {
-            silhouette_score += Separation - Cohesion / Separation;
-        } else silhouette_score += Separation - Cohesion / Cohesion;
-    }
+        double mean_coh = Cohesion / n_coh;
+        double mean_sep = Separation / n_sep;
 
+        if (mean_sep > mean_coh) {
+            silhouette_score += (mean_sep - mean_coh) / mean_sep;
+        } else silhouette_score += (mean_sep - mean_coh) / mean_coh;
+    }
     return silhouette_score / n;
 }
- 

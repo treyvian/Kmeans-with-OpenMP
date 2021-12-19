@@ -9,12 +9,15 @@ void read_csv (int row, int col, char *filename, int **data) {
 	
     FILE *file;
 	file = fopen (filename, "r") ;
+    if(file == NULL) {
+      perror("Error opening file");
+      exit(-1);
+    }
 
 	int i = 0;
     char line[4098];
 	while (fgets(line, 4098, file) && (i < row)) {
-    	// double row[ssParams->nreal + 1];
-        char* tmp = strdup(line);
+    	char* tmp = strdup(line);
 
 	    int j = 0;
 	    const char* tok;
@@ -26,6 +29,8 @@ void read_csv (int row, int col, char *filename, int **data) {
         free(tmp);
         i++;
     }
+
+    fclose(file);
 }
 
 void create_marks_csv(char *filename, point *points,int n){
@@ -36,7 +41,11 @@ void create_marks_csv(char *filename, point *points,int n){
     
     //filename = strcat(filename,".csv");
 
-    fp=fopen(filename,"w+");
+    fp = fopen(filename,"w+");
+    if (fp == NULL) {
+      perror("Error opening file");
+      exit(-1);
+    }
 
     fprintf(fp,"X,Y,Cluster\n"); 
 
@@ -71,9 +80,8 @@ int main (int argc, char const *argv[]) {
 		dat[i] = (int *)malloc(col * sizeof(int));
 	}
 
-	read_csv(row, col, fname, dat);
-
-    int n_clusters = atoi(argv[4]);    
+	read_csv(row, col, fname, dat); 
+   
 
     point *data = (point *)malloc((row - 1) * sizeof(point));
 
@@ -94,19 +102,33 @@ int main (int argc, char const *argv[]) {
     }
     free(dat);
     
-    
+    int n_clusters = atoi(argv[4]);
     if (n_clusters < 1) {
-        print("Number of clusters inserted not valid\n");
+        printf("Number of clusters inserted not valid\n");
         exit(1);    
     }
 
-    
-
     // KMeans implementations
+    double best_silhouette = -2;
+    double sil_score;
+    int best_cluster = -1;
+
     for (size_t i = 0; i < n_clusters; i++) {
         kMeansClustering(data, data_size, 100, i);
+        sil_score = silhouette_score(data, data_size);
+        
+        if (sil_score > best_silhouette) {
+            best_silhouette = sil_score;
+            best_cluster = i;
+        }
     }
 
+    if (best_cluster != -1) {
+        kMeansClustering(data, data_size, 100, best_cluster);
+    } else {
+        perror("Correct number of clusters not found\n");
+        exit(-1);
+    }
     char *name = "output.csv";
 
     create_marks_csv(name,data,data_size);

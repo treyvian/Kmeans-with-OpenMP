@@ -10,7 +10,7 @@ typedef struct point {
 
 void point_init (point*, double*, int);
 
-double distance (point, point);
+double distance (point *, point *);
 
 void copy_point (point *, point *);
 

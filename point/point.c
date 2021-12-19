@@ -6,8 +6,8 @@
 void point_init (point *p, double *x, int dimensions) {
     
     if (p == NULL){
-        printf("null pointer to the init function\n");   
-        exit(1);
+        perror("null pointer to the init function\n");   
+        exit(-1);
     }
 
     p->x = x;
@@ -16,11 +16,17 @@ void point_init (point *p, double *x, int dimensions) {
     p->minDist = __DBL_MAX__;
 }
 
-double distance (point p1, point p2) {
+double distance (point *p1, point *p2) {
+
+    if (p1 == NULL || p2 == NULL) {
+        perror("null pointer in distance method\n");
+        exit(-1);
+    }
+
     double dist = 0;
 
-    for (int i = 0; i < p1.dimensions; i++) {
-        dist += (p2.x[i] - p1.x[i]) * (p2.x[i] - p1.x[i]);
+    for (int i = 0; i < p1->dimensions; ++i) {
+        dist += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
     }
     
     return dist;
@@ -28,8 +34,8 @@ double distance (point p1, point p2) {
 
 void copy_point (point *o, point *p) {
     if (o == NULL || p == NULL) {
-        printf("null pointer in copy method\n");
-        exit(1);
+        perror("null pointer in copy method\n");
+        exit(-1);
     }
 
     p->x = (double *)malloc(o->dimensions * sizeof(double));
@@ -43,8 +49,8 @@ void copy_point (point *o, point *p) {
 
 int equals (point *p1, point *p2){
     if (p1 == NULL || p2 == NULL) {
-        printf("one of the pointers in input is null\n");
-        return 0;
+        perror("one of the pointers in input is null\n");
+        exit(-1);
     }
 
     if (p1 == p2) {
@@ -80,5 +86,10 @@ void print_point (point *p) {
 }
 
 void delete_x (point *p) {
+    if (p == NULL) {
+        perror("null pointer in delete method\n");
+        return;
+    }
+
     free(p -> x);
 }
