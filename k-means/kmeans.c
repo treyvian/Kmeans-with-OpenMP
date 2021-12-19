@@ -125,4 +125,38 @@ void kMeansClustering (point *points,
     }
     free(centroids);
 }
+
+
+int silhouette_score (point *data, int n) {
+    double Cohesion;
+    int n_coh;
+    double Separation;
+    int n_sep;
+    double silhouette_score = 0;
+
+    int cluster_number;
+    for (int i=0; i < n; ++i) {
+        Cohesion = 0;
+        n_coh = 0;
+        Separation = 0;
+        n_sep = 0;
+        cluster_number = data[i].cluster;
+        
+        for (int j = 0; j < n; ++j) {
+            if (cluster_number == data[j].cluster) {
+                Cohesion += distance(data[i], data[j]);
+                ++n_coh;
+            } else {
+                Separation += distance(data[i], data[j]);
+                ++n_sep;
+            }
+        }
+
+        if (Separation > Cohesion) {
+            silhouette_score += Separation - Cohesion / Separation;
+        } else silhouette_score += Separation - Cohesion / Cohesion;
+    }
+
+    return silhouette_score / n;
+}
  

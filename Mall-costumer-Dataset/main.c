@@ -53,7 +53,7 @@ void create_marks_csv(char *filename, point *points,int n){
 }
 
 int main (int argc, char const *argv[]) {
-
+    
     // Reading the csv file
     if (argc < 3) {
 		printf("Please specify the CSV file as an input.\n");
@@ -73,7 +73,7 @@ int main (int argc, char const *argv[]) {
 
 	read_csv(row, col, fname, dat);
 
-    
+    int n_clusters = atoi(argv[4]);    
 
     point *data = (point *)malloc((row - 1) * sizeof(point));
 
@@ -87,10 +87,6 @@ int main (int argc, char const *argv[]) {
     }
 
     const size_t data_size = row-1;
-     
-    // for (int i = 0; i < data_size; i++) {
-    //     print_point(&data[i]);
-    // }
 
     // freeing memory for the array dat
     for (int i=0; i < data_size; i++) {
@@ -98,7 +94,18 @@ int main (int argc, char const *argv[]) {
     }
     free(dat);
     
-    kMeansClustering(data, data_size, 100, 5);
+    
+    if (n_clusters < 1) {
+        print("Number of clusters inserted not valid\n");
+        exit(1);    
+    }
+
+    
+
+    // KMeans implementations
+    for (size_t i = 0; i < n_clusters; i++) {
+        kMeansClustering(data, data_size, 100, i);
+    }
 
     char *name = "output.csv";
 
