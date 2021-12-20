@@ -19,6 +19,10 @@ void kMeansClustering (point *points,
         perror("Number of epochs not correct");
         exit(-1);
     }
+
+    for (int i = 0; i < n; i++) {
+        reset_point(&points[i]);
+    }
     
     point *centroids = (point *)malloc(k * sizeof(point));
 
@@ -109,14 +113,14 @@ void kMeansClustering (point *points,
             }
             free(centroids);
 
-            printf("Number of iterations: %d\n", iter);
+            printf("Total n° of iterations with %d clusters: %d\n", k, iter);
             return;
         }
 
-        iter = t;
+        iter = t + 1;
     }
 
-    printf("Number of iterations: %d\n", iter);
+    printf("Total n° of iterations with %d clusters: %d\n", k, iter);
     // Freeing points, sum and centroids
     free(nPoints);
 
@@ -135,30 +139,42 @@ void kMeansClustering (point *points,
 double silhouette_score (point *data, int n) {
     double Cohesion;
     int n_coh;
-    double Separation;
+    double Separation[n];
     int n_sep;
     double silhouette_score = 0;
-
     int cluster_number;
+
+    for (int i = 0; i < n; ++i){
+        Separation[i] = 0.0; 
+    }
+
     for (int i=0; i < n; ++i) {
         Cohesion = 0;
         n_coh = 0;
-        Separation = 0;
         n_sep = 0;
         cluster_number = data[i].cluster;
         
         for (int j = 0; j < n; ++j) {
-            if (cluster_number == data[j].cluster) {
+            if (&data[i] == &data[j]) {            
+                continue;
+            } else if (cluster_number == data[j].cluster) {
                 Cohesion += distance(&data[i], &data[j]);
                 ++n_coh;
             } else {
-                Separation += distance(&data[i], &data[j]);
+                Separation[i] = distance(&data[i], &data[j]);
                 ++n_sep;
             }
         }
 
-        double mean_coh = Cohesion / n_coh;
-        double mean_sep = Separation / n_sep;
+        double sep = __DBL_MAX__;
+        for (int j = 0; j < n; ++j) {
+            if (Separation[j] != 0 && sep > Separation[j]){
+                sep = Separation[j];
+            }
+        }
+
+        double mean_coh = Cohesion / (n_coh - 1);
+        double mean_sep = sep / n_sep;
 
         if (mean_sep > mean_coh) {
             silhouette_score += (mean_sep - mean_coh) / mean_sep;

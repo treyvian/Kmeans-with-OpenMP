@@ -101,11 +101,11 @@ int main (int argc, char const *argv[]) {
         free(dat[i]);
     }
     free(dat);
-    
+
     int n_clusters = atoi(argv[4]);
     if (n_clusters < 1) {
         printf("Number of clusters inserted not valid\n");
-        exit(1);    
+        exit(-1);    
     }
 
     // KMeans implementations
@@ -113,7 +113,7 @@ int main (int argc, char const *argv[]) {
     double sil_score;
     int best_cluster = -1;
 
-    for (size_t i = 0; i < n_clusters; i++) {
+    for (int i = 2; i < (n_clusters + 1); i++) {
         kMeansClustering(data, data_size, 100, i);
         sil_score = silhouette_score(data, data_size);
         
@@ -124,11 +124,13 @@ int main (int argc, char const *argv[]) {
     }
 
     if (best_cluster != -1) {
+        printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
         kMeansClustering(data, data_size, 100, best_cluster);
     } else {
         perror("Correct number of clusters not found\n");
         exit(-1);
     }
+
     char *name = "output.csv";
 
     create_marks_csv(name,data,data_size);

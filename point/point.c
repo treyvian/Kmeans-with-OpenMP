@@ -47,6 +47,18 @@ void copy_point (point *o, point *p) {
     p->minDist = o->minDist;
 }
 
+
+void reset_point (point *p) {
+    if (p == NULL) {
+        perror("null pointer in reset method\n");
+        exit(-1);
+    }
+
+    p->cluster = -1;
+    p->minDist = __DBL_MAX__;
+}
+
+
 int equals (point *p1, point *p2){
     if (p1 == NULL || p2 == NULL) {
         perror("one of the pointers in input is null\n");
