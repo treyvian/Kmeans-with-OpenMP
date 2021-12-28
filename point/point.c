@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "point.h"
 
@@ -29,7 +30,7 @@ double distance (point *p1, point *p2) {
         dist += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
     }
     
-    return dist;
+    return sqrt(dist);
 }
 
 void copy_point (point *o, point *p) {

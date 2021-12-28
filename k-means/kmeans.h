@@ -9,6 +9,6 @@ void kMeansClustering (point *,
                         const int, 
                         const int);
 
-double silhouette_score (point *, int);
+double silhouette_score (point *, int, int);
 
 #endif

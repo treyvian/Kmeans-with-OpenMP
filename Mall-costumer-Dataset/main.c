@@ -109,15 +109,15 @@ int main (int argc, char const *argv[]) {
     }
 
     // KMeans implementations
-    double best_silhouette = -2;
+    double best_silhouette = -1;
     double sil_score;
     int best_cluster = -1;
 
     for (int i = 2; i < (n_clusters + 1); i++) {
         kMeansClustering(data, data_size, 100, i);
-        sil_score = silhouette_score(data, data_size);
-        
-        if (sil_score > best_silhouette) {
+        sil_score = silhouette_score(data, data_size, i);
+        printf("%f ", sil_score);
+        if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
         }

@@ -136,48 +136,49 @@ void kMeansClustering (point *points,
 }
 
 
-double silhouette_score (point *data, int n) {
+double silhouette_score (point *data, int n, int k) {
     double Cohesion;
     int n_coh;
-    double Separation[n];
-    int n_sep;
+    double Separation[k];
+    int n_sep[k];
     double silhouette_score = 0;
     int cluster_number;
-
-    for (int i = 0; i < n; ++i){
-        Separation[i] = 0.0; 
-    }
 
     for (int i=0; i < n; ++i) {
         Cohesion = 0;
         n_coh = 0;
-        n_sep = 0;
         cluster_number = data[i].cluster;
+        
+        for (int t = 0; t < k; ++t) {
+            Separation[t] = 0.0;
+            n_sep[t] = 0;
+        }
         
         for (int j = 0; j < n; ++j) {
             if (&data[i] == &data[j]) {            
                 continue;
             } else if (cluster_number == data[j].cluster) {
                 Cohesion += distance(&data[i], &data[j]);
-                ++n_coh;
+                n_coh++;
             } else {
-                Separation[i] = distance(&data[i], &data[j]);
-                ++n_sep;
+                Separation[data[j].cluster] += distance(&data[i], &data[j]);
+                n_sep[data[j].cluster]++;
             }
         }
+
+        double mean_coh = Cohesion / n_coh;
 
         double sep = __DBL_MAX__;
-        for (int j = 0; j < n; ++j) {
-            if (Separation[j] != 0 && sep > Separation[j]){
-                sep = Separation[j];
+        double mean_sep;
+        for (int j = 0; j < k; ++j) {
+            mean_sep = Separation[j] / n_sep[j];
+            if (sep > mean_sep){
+                sep = mean_sep;
             }
         }
 
-        double mean_coh = Cohesion / (n_coh - 1);
-        double mean_sep = sep / n_sep;
-
-        if (mean_sep > mean_coh) {
-            silhouette_score += (mean_sep - mean_coh) / mean_sep;
+        if (sep > mean_coh) {
+            silhouette_score += (sep - mean_coh) / sep;
         } else silhouette_score += (mean_sep - mean_coh) / mean_coh;
     }
     return silhouette_score / n;
