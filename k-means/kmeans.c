@@ -113,14 +113,14 @@ void kMeansClustering (point *points,
             }
             free(centroids);
 
-            printf("Total n° of iterations with %d clusters: %d\n", k, iter);
+            printf("With %d clusters, it ran for %d number of iterations\n", k, iter);
             return;
         }
 
         iter = t + 1;
     }
 
-    printf("Total n° of iterations with %d clusters: %d\n", k, iter);
+    printf("With %d clusters, it ran for %d number of iterations\n", k, iter);
     // Freeing points, sum and centroids
     free(nPoints);
 
@@ -155,26 +155,31 @@ double silhouette_score (point *data, int n, int k) {
         }
         
         for (int j = 0; j < n; ++j) {
-            if (&data[i] == &data[j]) {            
-                continue;
-            } else if (cluster_number == data[j].cluster) {
-                Cohesion += distance(&data[i], &data[j]);
-                n_coh++;
-            } else {
-                Separation[data[j].cluster] += distance(&data[i], &data[j]);
-                n_sep[data[j].cluster]++;
-            }
+            if (&data[i] != &data[j]) {            
+                if (cluster_number == data[j].cluster) {
+                    Cohesion += distance(&data[i], &data[j]);
+                    n_coh++;
+                
+                } else {
+                    Separation[data[j].cluster] += distance(&data[i], &data[j]);
+                    n_sep[data[j].cluster]++;
+                }
+            }    
         }
 
         double mean_coh = Cohesion / n_coh;
-
+        
         double sep = __DBL_MAX__;
         double mean_sep;
         for (int j = 0; j < k; ++j) {
-            mean_sep = Separation[j] / n_sep[j];
-            if (sep > mean_sep){
-                sep = mean_sep;
-            }
+            if (j != cluster_number) {
+                printf("%d ", n_sep[j]);
+                mean_sep = Separation[j] / n_sep[j];
+                
+                if (sep > mean_sep){
+                    sep = mean_sep;
+                }
+            }    
         }
 
         if (sep > mean_coh) {

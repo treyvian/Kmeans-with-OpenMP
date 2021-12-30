@@ -9,7 +9,7 @@ if [[ "$choice" == 'y' ]]; then
     # Executing code
     valgrind --leak-check=full --show-leak-kinds=all ./output 201 5 Mall_Customers.csv 5 -s
 else
-    ./output 201 5 Mall_Customers.csv 5
+    ./output 201 5 Mall_Customers.csv 20
 fi
 
 make clean
