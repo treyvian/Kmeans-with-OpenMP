@@ -11,7 +11,7 @@ void read_csv (int row, int col, char *filename, int **data) {
 	file = fopen (filename, "r") ;
     if(file == NULL) {
       perror("Error opening file");
-      exit(-1);
+      exit(1);
     }
 
 	int i = 0;
@@ -44,7 +44,7 @@ void create_marks_csv(char *filename, point *points,int n){
     fp = fopen(filename,"w+");
     if (fp == NULL) {
       perror("Error opening file");
-      exit(-1);
+      exit(1);
     }
 
     fprintf(fp,"X,Y,Cluster\n"); 
@@ -105,7 +105,7 @@ int main (int argc, char const *argv[]) {
     int n_clusters = atoi(argv[4]);
     if (n_clusters < 1) {
         printf("Number of clusters inserted not valid\n");
-        exit(-1);    
+        exit(1);    
     }
 
     // KMeans implementations
@@ -128,7 +128,7 @@ int main (int argc, char const *argv[]) {
         kMeansClustering(data, data_size, 100, best_cluster);
     } else {
         perror("Correct number of clusters not found\n");
-        exit(-1);
+        exit(1);
     }
 
     char *name = "output.csv";
