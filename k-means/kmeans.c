@@ -12,23 +12,35 @@ void kMeansClustering (point *points,
     
     if (points == NULL){
         perror("Missing input data");
-        exit(-1);
+        exit(1);
     }
 
     if (epochs <= 0) {
         perror("Number of epochs not correct");
-        exit(-1);
+        exit(1);
     }
 
     for (int i = 0; i < n; i++) {
         reset_point(&points[i]);
     }
-    
+
     point *centroids = (point *)malloc(k * sizeof(point));
 
     srand(time(0));
-    for (int i = 0; i < k; ++i) {
-        copy_point(&points[rand() % n], &centroids[i]);
+    int bool = 1;
+    int random;
+    for (int i = 0; i < k; i++) {
+        random = rand() % n;
+        for (int j = 0; j < i; j++) {
+            if (equals(&points[random], &centroids[j])) {
+                bool = 0;
+                i--;
+                break;
+            }    
+        }
+        if (bool) {
+            copy_point(&points[random], &centroids[i]);
+        }
     }
     
     int *nPoints = (int *)malloc(k * sizeof(int));
@@ -42,36 +54,30 @@ void kMeansClustering (point *points,
     
     for (int t = 0; t<epochs; t++) {
         double dist;
-        int cluster_id;
 
-        // Updating the distance of each point with respect to the current centroids
-    
-        for (int i = 0; i < k; ++i) {
-            cluster_id = i;
-
-            for (int j = 0; j < n; j++) {
-                dist = distance(&centroids[i], &points[j]);
-        
-                if (dist < points[j].minDist) {
-                    points[j].minDist = dist;
-                    points[j].cluster = cluster_id;
-                }
-            }
-        }
-
-        // Initialise with zeroes
+                // Initialise with zeroes
         for (int j = 0; j < k; ++j) {
             nPoints[j] = 0;
             for (int i = 0; i< points->dimensions; i++) {
                 sum[j][i] = 0.0;
             }    
         }
-    
-        // Iterate over points to append data to centroids
+
+        // Updating the distance of each point with respect to the current centroids
         int cluster_num;
-        for (int i=0; i<n; i++) {
-            cluster_num = points[i].cluster;
-            ++nPoints[cluster_num];
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < k; ++j) {
+                dist = distance(&centroids[j], &points[i]);
+
+                if (dist < points[i].minDist){
+                    points[i].minDist = dist;
+                    points[i].cluster = j;
+                    cluster_num = j; 
+                }
+            }
+
+            // Iterate over points to append data to centroids
+            nPoints[cluster_num]++;
             
             for (int j = 0; j < points->dimensions; ++j) {
                 sum[cluster_num][j] += points[i].x[j]; 
@@ -80,6 +86,7 @@ void kMeansClustering (point *points,
             points[i].minDist = __DBL_MAX__;
         }
 
+
         /*
             Boolean variable used to stop the loop in case there 
             is no improvement in the new centroids
@@ -87,14 +94,15 @@ void kMeansClustering (point *points,
         int bool = 1;
 
         // Compute new centroids
-        for (int i=0; i<k; ++i) {
+        double prov_sum;
+        for (int i = 0; i < k; ++i) {
             int nP = nPoints[i];
 
-            for (int j = 0; j<centroids->dimensions; j++) {
-                
-                if (centroids[i].x[j] != sum[i][j]/nP) {
+            for (int j = 0; j < centroids->dimensions; j++) {
+                prov_sum = sum[i][j]/nP;
+                if (centroids[i].x[j] != prov_sum) {
                     bool = 0;
-                    centroids[i].x[j] = sum[i][j]/nP;
+                    centroids[i].x[j] = prov_sum;
                 }    
             }
         }
@@ -138,52 +146,58 @@ void kMeansClustering (point *points,
 
 double silhouette_score (point *data, int n, int k) {
     double Cohesion;
-    int n_coh;
+    double mean_coh;
+    
     double Separation[k];
-    int n_sep[k];
+    double mean_sep;
+
     double silhouette_score = 0;
     int cluster_number;
 
+    int n_clust[k];
+
     for (int i=0; i < n; ++i) {
         Cohesion = 0;
-        n_coh = 0;
         cluster_number = data[i].cluster;
         
         for (int t = 0; t < k; ++t) {
             Separation[t] = 0.0;
-            n_sep[t] = 0;
+            n_clust[t] = 0;
         }
         
         for (int j = 0; j < n; ++j) {
-            if (&data[i] != &data[j]) {            
+            if (i != j) {            
                 if (cluster_number == data[j].cluster) {
                     Cohesion += distance(&data[i], &data[j]);
-                    n_coh++;
+                    n_clust[data[j].cluster]++;
                 
                 } else {
                     Separation[data[j].cluster] += distance(&data[i], &data[j]);
-                    n_sep[data[j].cluster]++;
+                    n_clust[data[j].cluster]++;
                 }
             }    
         }
 
-        double mean_coh = Cohesion / n_coh;
+        for (int y = 0; y < k; ++y) {
+            if (n_clust[y] == 0) 
+                printf("(%d, %f)", y, Separation[y]);
+        }
+
+        mean_coh = Cohesion / n_clust[cluster_number];
         
-        double sep = __DBL_MAX__;
-        double mean_sep;
+        mean_sep = __DBL_MAX__;
+        double sep;
         for (int j = 0; j < k; ++j) {
             if (j != cluster_number) {
-                printf("%d ", n_sep[j]);
-                mean_sep = Separation[j] / n_sep[j];
-                
-                if (sep > mean_sep){
-                    sep = mean_sep;
+                sep = Separation[j] / n_clust[j];
+                if (mean_sep > sep){
+                    mean_sep = sep;
                 }
             }    
         }
 
         if (sep > mean_coh) {
-            silhouette_score += (sep - mean_coh) / sep;
+            silhouette_score += (mean_sep - mean_coh) / mean_sep;
         } else silhouette_score += (mean_sep - mean_coh) / mean_coh;
     }
     return silhouette_score / n;

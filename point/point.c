@@ -8,7 +8,7 @@ void point_init (point *p, double *x, int dimensions) {
     
     if (p == NULL){
         perror("null pointer to the init function\n");   
-        exit(-1);
+        exit(1);
     }
 
     p->x = x;
@@ -21,7 +21,7 @@ double distance (point *p1, point *p2) {
 
     if (p1 == NULL || p2 == NULL) {
         perror("null pointer in distance method\n");
-        exit(-1);
+        exit(1);
     }
 
     double dist = 0;
@@ -36,7 +36,7 @@ double distance (point *p1, point *p2) {
 void copy_point (point *o, point *p) {
     if (o == NULL || p == NULL) {
         perror("null pointer in copy method\n");
-        exit(-1);
+        exit(1);
     }
 
     p->x = (double *)malloc(o->dimensions * sizeof(double));
@@ -63,7 +63,7 @@ void reset_point (point *p) {
 int equals (point *p1, point *p2){
     if (p1 == NULL || p2 == NULL) {
         perror("one of the pointers in input is null\n");
-        exit(-1);
+        exit(1);
     }
 
     if (p1 == p2) {
