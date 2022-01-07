@@ -1,5 +1,5 @@
-output: main.c ../k-means/kmeans.c ../k-means/kmeans.h ../point/point.c ../point/point.h
-	gcc -o output main.c ../k-means/kmeans.c ../point/point.c -lm
+output: mall.c ../k-means/kmeans.c ../k-means/kmeans.h ../point/point.c ../point/point.h
+	gcc -fopenmp -o output mall.c ../k-means/kmeans.c ../point/point.c -lm
 
 clean:
 	rm output

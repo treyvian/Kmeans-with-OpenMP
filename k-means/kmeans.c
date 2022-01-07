@@ -26,10 +26,11 @@ void kMeansClustering (point *points,
 
     point *centroids = (point *)malloc(k * sizeof(point));
 
+    int bool, random, iter, cluster_num;
+
     srand(time(0));
-    int bool = 1;
-    int random;
     for (int i = 0; i < k; i++) {
+        bool = 1;
         random = rand() % n;
         for (int j = 0; j < i; j++) {
             if (equals(&points[random], &centroids[j])) {
@@ -49,9 +50,7 @@ void kMeansClustering (point *points,
     for (int i = 0; i < k; ++i) {
 	    sum[i] = (double *)malloc(points->dimensions * sizeof(double));
 	}
-    
-    int iter;
-    
+        
     for (int t = 0; t<epochs; t++) {
         double dist;
 
@@ -64,7 +63,6 @@ void kMeansClustering (point *points,
         }
 
         // Updating the distance of each point with respect to the current centroids
-        int cluster_num;
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < k; ++j) {
                 dist = distance(&centroids[j], &points[i]);
@@ -86,12 +84,7 @@ void kMeansClustering (point *points,
             points[i].minDist = __DBL_MAX__;
         }
 
-
-        /*
-            Boolean variable used to stop the loop in case there 
-            is no improvement in the new centroids
-        */
-        int bool = 1;
+        bool = 1;
 
         // Compute new centroids
         double prov_sum;
@@ -145,16 +138,11 @@ void kMeansClustering (point *points,
 
 
 double silhouette_score (point *data, int n, int k) {
-    double Cohesion;
-    double mean_coh;
     
-    double Separation[k];
-    double mean_sep;
+    double Cohesion, mean_coh, Separation[k], mean_sep, sep;
 
     double silhouette_score = 0;
-    int cluster_number;
-
-    int n_clust[k];
+    int cluster_number, n_clust[k];
 
     for (int i=0; i < n; ++i) {
         Cohesion = 0;
@@ -178,15 +166,9 @@ double silhouette_score (point *data, int n, int k) {
             }    
         }
 
-        for (int y = 0; y < k; ++y) {
-            if (n_clust[y] == 0) 
-                printf("(%d, %f)", y, Separation[y]);
-        }
-
         mean_coh = Cohesion / n_clust[cluster_number];
-        
         mean_sep = __DBL_MAX__;
-        double sep;
+
         for (int j = 0; j < k; ++j) {
             if (j != cluster_number) {
                 sep = Separation[j] / n_clust[j];

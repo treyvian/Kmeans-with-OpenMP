@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <time.h> /* for time() */
+#include <omp.h>
+
 #include "../k-means/kmeans.h"
 
-void read_csv (int row, int col, char *filename, int **data) {
+void read_csv (int row, int col, const char *filename, int **data) {
 	
     FILE *file;
 	file = fopen (filename, "r") ;
@@ -33,15 +36,13 @@ void read_csv (int row, int col, char *filename, int **data) {
     fclose(file);
 }
 
-void create_marks_csv(char *filename, point *points,int n){
+void create_marks_csv(point *points, int n){
  
-    printf("Creating %s.csv file\n",filename);
+    printf("Creating output.csv file\n");
     
     FILE *fp;
-    
-    //filename = strcat(filename,".csv");
 
-    fp = fopen(filename,"w+");
+    fp = fopen("output.csv","w+");
     if (fp == NULL) {
       perror("Error opening file");
       exit(1);
@@ -57,13 +58,11 @@ void create_marks_csv(char *filename, point *points,int n){
     }   
     
     fclose(fp);
-    
-    printf("\n %sfile created\n",filename);
+    printf("\n output.csv file created\n");
 }
 
 int main (int argc, char const *argv[]) {
     
-    // Reading the csv file
     if (argc < 3) {
 		printf("Please specify the CSV file as an input.\n");
 		exit(0);
@@ -81,7 +80,6 @@ int main (int argc, char const *argv[]) {
 	}
 
 	read_csv(row, col, fname, dat); 
-   
 
     point *data = (point *)malloc((row - 1) * sizeof(point));
 
@@ -94,13 +92,13 @@ int main (int argc, char const *argv[]) {
         point_init(&data[i-1], x, 2);
     }
 
-    const size_t data_size = row-1;
-
     // freeing memory for the array dat
-    for (int i=0; i < data_size; i++) {
+    for (int i=0; i < row; i++) {
         free(dat[i]);
     }
     free(dat);
+
+    const size_t data_size = row-1;
 
     int n_clusters = atoi(argv[4]);
     if (n_clusters < 1) {
@@ -116,24 +114,31 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         kMeansClustering(data, data_size, 100, i);
         sil_score = silhouette_score(data, data_size, i);
-        printf("%f \n", sil_score);
+        printf("with a silhouette score of %.3f \n", sil_score);
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
         }
     }
 
-    if (best_cluster != -1) {
-        printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
-        kMeansClustering(data, data_size, 100, best_cluster);
-    } else {
+    if (best_cluster == -1) {
         perror("Correct number of clusters not found\n");
         exit(1);
     }
 
-    char *name = "output.csv";
+    double tstart, elapsed;
+    
+    printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
 
-    create_marks_csv(name,data,data_size);
+    // Starting the timer for performance measurement
+    tstart = omp_get_wtime();
+    kMeansClustering(data, data_size, 100, best_cluster);
+
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time %f\n", elapsed);
+
+    create_marks_csv(data,data_size);
     
     // Freeing memory for the array data
 
