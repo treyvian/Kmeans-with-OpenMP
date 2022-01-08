@@ -1,71 +1,19 @@
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 
 #include <time.h> /* for time() */
 #include <omp.h>
 
 #include "../k-means/kmeans.h"
-
-void read_csv (int row, int col, const char *filename, int **data) {
-	
-    FILE *file;
-	file = fopen (filename, "r") ;
-    if(file == NULL) {
-      perror("Error opening file");
-      exit(1);
-    }
-
-	int i = 0;
-    char line[4098];
-	while (fgets(line, 4098, file) && (i < row)) {
-    	char* tmp = strdup(line);
-
-	    int j = 0;
-	    const char* tok;
-	    for (tok = strtok(line, ","); tok && *tok; j++, tok = strtok(NULL, ","))
-	    {
-	        data[i][j] = atof(tok);
-	    }
-
-        free(tmp);
-        i++;
-    }
-
-    fclose(file);
-}
-
-void create_marks_csv(point *points, int n){
- 
-    printf("Creating output.csv file\n");
-    
-    FILE *fp;
-
-    fp = fopen("output.csv","w+");
-    if (fp == NULL) {
-      perror("Error opening file");
-      exit(1);
-    }
-
-    fprintf(fp,"X,Y,Cluster\n"); 
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < points->dimensions; ++j) {
-            fprintf(fp,"%f,", points[i].x[j]);
-        }
-        fprintf(fp,"%d\n", points[i].cluster);
-    }   
-    
-    fclose(fp);
-    printf("\n output.csv file created\n");
-}
+#include "../rw-csv/rw.h"
 
 int main (int argc, char const *argv[]) {
     
     if (argc < 3) {
 		printf("Please specify the CSV file as an input.\n");
-		exit(0);
+		exit(1);
 	}
 
 	int row = atoi(argv[1]);
@@ -83,13 +31,14 @@ int main (int argc, char const *argv[]) {
 
     point *data = (point *)malloc((row - 1) * sizeof(point));
 
-    double *x;
+    double *supp_vector;
+    int dimensions = 2
 
     for (int i = 1; i < row; ++i) {
-        x = (double *)malloc(2 * sizeof(double)); 
-        x[0] = (double) dat[i][3];
-        x[1] = (double) dat[i][4];
-        point_init(&data[i-1], x, 2);
+        supp_vector = (double *)malloc(dimensions * sizeof(double)); 
+        supp_vector[0] = (double) dat[i][3];
+        supp_vector[1] = (double) dat[i][4];
+        point_init(&data[i-1], supp_vector, dimensions);
     }
 
     // freeing memory for the array dat
@@ -138,7 +87,9 @@ int main (int argc, char const *argv[]) {
     elapsed = omp_get_wtime() - tstart;
     printf("Elapsed time %f\n", elapsed);
 
-    create_marks_csv(data,data_size);
+    char *header = "X Y Cluster\n";
+    
+    create_marks_csv(data,data_size, header);
     
     // Freeing memory for the array data
 
