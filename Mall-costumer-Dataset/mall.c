@@ -21,10 +21,10 @@ int main (int argc, char const *argv[]) {
 	char fname[256];	
     strcpy(fname, argv[3]);
 
-	int **dat;
-	dat = (int **)malloc(row * sizeof(int *));
+	double **dat;
+	dat = (double **)malloc(row * sizeof(double *));
 	for (int i = 0; i < row; ++i){
-		dat[i] = (int *)malloc(col * sizeof(int));
+		dat[i] = (double *)malloc(col * sizeof(double));
 	}
 
 	read_csv(row, col, fname, dat); 
@@ -32,7 +32,7 @@ int main (int argc, char const *argv[]) {
     point *data = (point *)malloc((row - 1) * sizeof(point));
 
     double *supp_vector;
-    int dimensions = 2
+    int dimensions = 2;
 
     for (int i = 1; i < row; ++i) {
         supp_vector = (double *)malloc(dimensions * sizeof(double)); 

@@ -4,7 +4,7 @@
 
 #include "rw.h"
 
-void read_csv (int row, int col, const char *filename, int **data) {
+void read_csv (int row, int col, const char *filename, double **data) {
 	
     FILE *file;
 	file = fopen (filename, "r") ;

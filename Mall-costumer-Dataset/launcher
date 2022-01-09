@@ -18,5 +18,5 @@ read -p 'visualize the results ? [y/N]:' ans
 
 if [[ $ans == "y" ]]; then
     # Visualizing results
-    python visualizer.py
+    python plot.py
 fi
