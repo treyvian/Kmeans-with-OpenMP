@@ -39,6 +39,7 @@ void create_marks_csv(point *points, int n, const char *header){
     FILE *fp;
 
     fp = fopen("output.csv","w+");
+    
     if (fp == NULL) {
       perror("Error opening file");
       exit(1);
@@ -48,7 +49,7 @@ void create_marks_csv(point *points, int n, const char *header){
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < points->dimensions; ++j) {
-            fprintf(fp,"%f,", points[i].x[j]);
+            fprintf(fp,"%.3f,", points[i].x[j]);
         }
         fprintf(fp,"%d\n", points[i].cluster);
     }   

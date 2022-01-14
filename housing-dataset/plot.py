@@ -1,11 +1,15 @@
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 import pandas as pd
 import seaborn as sns
 
-X = pd.read_csv("output.csv",sep=',')
+df = pd.read_csv("output.csv",sep=',')
 
-sns.relplot(x=X["Longitude"], y=X["Latitude"], hue=X["Cluster"], data=X, height=6,)
+fig = plt.figure(figsize = (12,8))
+ax = plt.axes(projection='3d')
 
-X["MedHouseVal"] = df["MedHouseVal"]
-sns.catplot(x=X["MedInc"], y=X["Cluster"], data=X, kind="boxen", height=6)
+
+sctt = ax.scatter3D(df['Longitude'], df['Latitude'], df['MedInc'], c=df['Cluster'],cmap='rainbow')
+plt.show()
+
 

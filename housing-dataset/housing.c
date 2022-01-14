@@ -60,7 +60,7 @@ int main (int argc, char const *argv[]) {
     double sil_score;
     int best_cluster = -1;
     
-    for (int i = 2; i < (n_clusters + 1); i++) {
+    for (int i = 3; i < (n_clusters + 1); i++) {
         kMeansClustering(data, data_size, 100, i);
         sil_score = silhouette_score(data, data_size, i);
         printf("with a silhouette score of %.3f \n", sil_score);
@@ -87,9 +87,9 @@ int main (int argc, char const *argv[]) {
     elapsed = omp_get_wtime() - tstart;
     printf("Elapsed time %f\n", elapsed);
 
-    char *header = "MedInc Latitude Longitude Cluster\n";
+    char *header = "MedInc,Latitude,Longitude,Cluster\n";
     
-    create_marks_csv(data,data_size, header);
+    create_marks_csv(data, data_size, header);
     
     // Freeing memory for the array data
 
@@ -97,9 +97,6 @@ int main (int argc, char const *argv[]) {
         delete_x(&data[i]);
     }
     free(data);
-
-    return 0;
-    
 
     return 0;
 }

@@ -87,7 +87,7 @@ int main (int argc, char const *argv[]) {
     elapsed = omp_get_wtime() - tstart;
     printf("Elapsed time %f\n", elapsed);
 
-    char *header = "X Y Cluster\n";
+    char *header = "X,Y,Cluster\n";
     
     create_marks_csv(data,data_size, header);
     

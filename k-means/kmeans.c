@@ -27,6 +27,7 @@ void kMeansClustering (point *points,
     point *centroids = (point *)malloc(k * sizeof(point));
 
     int bool, random, iter, cluster_num;
+    int points_dimensions = points->dimensions;
 
     srand(time(0));
     for (int i = 0; i < k; i++) {
@@ -48,7 +49,7 @@ void kMeansClustering (point *points,
     double **sum = (double **)malloc(k * sizeof(double *));
 
     for (int i = 0; i < k; ++i) {
-	    sum[i] = (double *)malloc(points->dimensions * sizeof(double));
+	    sum[i] = (double *)malloc(points_dimensions * sizeof(double));
 	}
         
     for (int t = 0; t<epochs; t++) {
@@ -57,7 +58,7 @@ void kMeansClustering (point *points,
                 // Initialise with zeroes
         for (int j = 0; j < k; ++j) {
             nPoints[j] = 0;
-            for (int i = 0; i< points->dimensions; i++) {
+            for (int i = 0; i< points_dimensions; i++) {
                 sum[j][i] = 0.0;
             }    
         }
@@ -77,7 +78,7 @@ void kMeansClustering (point *points,
             // Iterate over points to append data to centroids
             nPoints[cluster_num]++;
             
-            for (int j = 0; j < points->dimensions; ++j) {
+            for (int j = 0; j < points_dimensions; ++j) {
                 sum[cluster_num][j] += points[i].x[j]; 
             }
             
@@ -91,7 +92,7 @@ void kMeansClustering (point *points,
         for (int i = 0; i < k; ++i) {
             int nP = nPoints[i];
 
-            for (int j = 0; j < centroids->dimensions; j++) {
+            for (int j = 0; j < points_dimensions; j++) {
                 prov_sum = sum[i][j]/nP;
                 if (centroids[i].x[j] != prov_sum) {
                     bool = 0;
@@ -139,7 +140,7 @@ void kMeansClustering (point *points,
 
 double silhouette_score (point *data, int n, int k) {
     
-    double Cohesion, mean_coh, Separation[k], mean_sep, sep;
+    double Cohesion, mean_coh, Separation[k], mean_sep, sep, distance;
 
     double silhouette_score = 0;
     int cluster_number, n_clust[k];
@@ -153,14 +154,18 @@ double silhouette_score (point *data, int n, int k) {
             n_clust[t] = 0;
         }
         
+
+
         for (int j = 0; j < n; ++j) {
             if (i != j) {            
+                distance = distance(&data[i], &data[j]);
+                
                 if (cluster_number == data[j].cluster) {
-                    Cohesion += distance(&data[i], &data[j]);
+                    Cohesion += distance
                     n_clust[data[j].cluster]++;
                 
                 } else {
-                    Separation[data[j].cluster] += distance(&data[i], &data[j]);
+                    Separation[data[j].cluster] += distance
                     n_clust[data[j].cluster]++;
                 }
             }    
