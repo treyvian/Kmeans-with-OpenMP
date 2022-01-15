@@ -5,7 +5,7 @@
 #include "kmeans.h"
 
 
-void kMeansClustering (point *points, 
+void k_means (point *points, 
                         const int n, 
                         const int epochs, 
                         const int k) {
@@ -20,9 +20,9 @@ void kMeansClustering (point *points,
         exit(1);
     }
 
-    for (int i = 0; i < n; i++) {
-        reset_point(&points[i]);
-    }
+    // for (int i = 0; i < n; i++) {
+    //     reset_point(&points[i]);
+    // }
 
     point *centroids = (point *)malloc(k * sizeof(point));
 
@@ -66,10 +66,10 @@ void kMeansClustering (point *points,
         // Updating the distance of each point with respect to the current centroids
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < k; ++j) {
-                dist = distance(&centroids[j], &points[i]);
+                dist = euclidian_distance(&centroids[j], &points[i]);
 
-                if (dist < points[i].minDist){
-                    points[i].minDist = dist;
+                if (dist < points[i].min_distance){
+                    points[i].min_distance = dist;
                     points[i].cluster = j;
                     cluster_num = j; 
                 }
@@ -82,7 +82,7 @@ void kMeansClustering (point *points,
                 sum[cluster_num][j] += points[i].x[j]; 
             }
             
-            points[i].minDist = __DBL_MAX__;
+            points[i].min_distance = __DBL_MAX__;
         }
 
         bool = 1;
@@ -103,17 +103,13 @@ void kMeansClustering (point *points,
 
         if (bool) {
             // Freeing points, sum and centroids
-            free(nPoints);
-
             for (int i = 0; i < k; ++i) {
                 free(sum[i]);
-            }
-            free(sum);
-
-            for (int i = 0; i < k; ++i) {
                 delete_x(&centroids[i]);
             }
-            free(centroids);
+            free(sum);
+            free(centroids); 
+            free(nPoints); 
 
             printf("With %d clusters, it ran for %d number of iterations\n", k, iter);
             return;
@@ -123,24 +119,21 @@ void kMeansClustering (point *points,
     }
 
     printf("With %d clusters, it ran for %d number of iterations\n", k, iter);
+    
     // Freeing points, sum and centroids
-    free(nPoints);
-
     for (int i = 0; i < k; ++i) {
         free(sum[i]);
-    }
-    free(sum);
-
-    for (int i = 0; i < k; ++i) {
         delete_x(&centroids[i]);
     }
-    free(centroids);
+    free(sum);
+    free(centroids); 
+    free(nPoints);  
 }
 
 
 double silhouette_score (point *data, int n, int k) {
     
-    double Cohesion, mean_coh, Separation[k], mean_sep, sep, distance;
+    double Cohesion, mean_coh, Separation[k], mean_sep, sep, dist;
 
     double silhouette_score = 0;
     int cluster_number, n_clust[k];
@@ -158,14 +151,14 @@ double silhouette_score (point *data, int n, int k) {
 
         for (int j = 0; j < n; ++j) {
             if (i != j) {            
-                distance = distance(&data[i], &data[j]);
+                distance = euclidian_distance(&data[i], &data[j]);
                 
                 if (cluster_number == data[j].cluster) {
-                    Cohesion += distance
+                    Cohesion += distance;
                     n_clust[data[j].cluster]++;
                 
                 } else {
-                    Separation[data[j].cluster] += distance
+                    Separation[data[j].cluster] += distance;
                     n_clust[data[j].cluster]++;
                 }
             }    

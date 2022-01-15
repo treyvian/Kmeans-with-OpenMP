@@ -56,44 +56,28 @@ int main (int argc, char const *argv[]) {
     }
 
     // KMeans implementations
-    double best_silhouette = -1;
-    double sil_score;
-    int best_cluster = -1;
     int max_iterations = 500;
-
-    for (int i = 2; i < (n_clusters + 1); i++) {
-        kMeansClustering(data, data_size, max_iterations, i);
-        sil_score = silhouette_score(data, data_size, i);
-        printf("with a silhouette score of %.3f \n", sil_score);
-        if (best_silhouette < sil_score) {
-            best_silhouette = sil_score;
-            best_cluster = i;
-        }
-    }
-
-    if (best_cluster == -1) {
-        perror("Correct number of clusters not found\n");
-        exit(1);
-    }
-
     double tstart, elapsed;
-    
-    printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
 
-    // Starting the timer for performance measurement
     tstart = omp_get_wtime();
-    kMeansClustering(data, data_size, 100, best_cluster);
-
-    // Stopping the timer and print the result
+    k_means(data, data_size, max_iterations, 6);
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time %f\n", elapsed);
+
+    printf("Elapsed time for k-means method: %f\n", elapsed);
+
+    tstart = omp_get_wtime();
+    double sil_score = silhouette_score(data, data_size, 6);
+    elapsed = omp_get_wtime() - tstart;
+    
+    printf("Elapsed time for silhouette method: %f\n", elapsed);
+    
+    printf("With 6 clusters the silhouette score is: %f \n", sil_score);
 
     char *header = "MedInc,Latitude,Longitude,Cluster\n";
     
     create_marks_csv(data, data_size, header);
     
     // Freeing memory for the array data
-
     for (int i = 0; i < data_size; ++i) {
         delete_x(&data[i]);
     }

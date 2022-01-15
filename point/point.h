@@ -5,7 +5,7 @@
 typedef struct point {
     double *x;
     int dimensions, cluster;
-    double minDist;
+    double min_distance;
 } point;
 
 void point_init (point*, double*, int);

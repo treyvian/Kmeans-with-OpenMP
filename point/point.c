@@ -14,23 +14,38 @@ void point_init (point *p, double *x, int dimensions) {
     p->x = x;
     p->dimensions = dimensions;
     p->cluster = -1;
-    p->minDist = __DBL_MAX__;
+    p->min_distance = __DBL_MAX__;
 }
 
-double distance (point *p1, point *p2) {
+double euclidian_distance (point *p1, point *p2) {
 
     if (p1 == NULL || p2 == NULL) {
         perror("null pointer in distance method\n");
         exit(1);
     }
 
-    double dist = 0;
+    double distance = 0;
 
     for (int i = 0; i < p1->dimensions; ++i) {
         dist += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
     }
     
-    return sqrt(dist);
+    return sqrt(distance);
+}
+
+double manhattan_distance (point *p1, point *p2) {
+    if (p1 == NULL || p2 == NULL) {
+        perror("null pointer in distance method\n");
+        exit(1);
+    }
+
+    double distance = 0;
+
+    for (int i = 0; i < p1->dimensions; ++i) {
+        dist += abs(p2->x[i] - p1->x[i]);
+    } 
+
+    return distance
 }
 
 void copy_point (point *o, point *p) {
@@ -45,7 +60,7 @@ void copy_point (point *o, point *p) {
     }
     p->dimensions = o->dimensions;
     p->cluster = o->cluster;
-    p->minDist = o->minDist;
+    p->min_distance = o->min_distance;
 }
 
 
@@ -56,7 +71,7 @@ void reset_point (point *p) {
     }
 
     p->cluster = -1;
-    p->minDist = __DBL_MAX__;
+    p->min_distance = __DBL_MAX__;
 }
 
 

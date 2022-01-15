@@ -4,7 +4,7 @@
 
 #include "../point/point.h"
 
-void kMeansClustering (point *, 
+void k_means (point *, 
                         const int, 
                         const int, 
                         const int);
