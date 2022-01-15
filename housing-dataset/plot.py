@@ -5,11 +5,8 @@ import seaborn as sns
 
 df = pd.read_csv("output.csv",sep=',')
 
-fig = plt.figure(figsize = (12,8))
-ax = plt.axes(projection='3d')
-
-
-sctt = ax.scatter3D(df['Longitude'], df['Latitude'], df['MedInc'], c=df['Cluster'],cmap='rainbow')
+plt.figure()
+plt.scatter(df['Longitude'], df['Latitude'], c=df['Cluster'],cmap='rainbow')
 plt.show()
 
 
