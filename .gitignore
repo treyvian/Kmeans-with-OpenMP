@@ -1,5 +1,5 @@
-Mall-costumer-Dataset/output.csv
-Mall-costumer-Dataset/data/
-
-housing-dataset/data/housing.csv
-housing-dataset/data.csv
+src/point/point.o
+src/rw-csv/rw.o
+src/silhouette-score/silhouette.o
+src/k-medoids/kmedoids.o
+src/k-means/kmeans.o
