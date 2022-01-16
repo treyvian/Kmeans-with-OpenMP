@@ -6,6 +6,9 @@
 #include <time.h> /* for time() */
 #include <omp.h>
 
+/*
+* Inclusion of my implementations
+*/
 #include "../../k-medoids/kmedoids.h"
 #include "../../silhouette-score/silhouette.h"
 #include "../../rw-csv/rw.h"
@@ -99,4 +102,6 @@ int main (int argc, char const *argv[]) {
         delete_x(&data[i]);
     }
     free(data);
+
+    return 0;
 }

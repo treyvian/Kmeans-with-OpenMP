@@ -6,6 +6,9 @@
 #include <time.h> /* for time() */
 #include <omp.h>
 
+/*
+* Inclusion of my implementations
+*/
 #include "../../k-means/kmeans.h"
 #include "../../silhouette-score/silhouette.h"
 #include "../../rw-csv/rw.h"
