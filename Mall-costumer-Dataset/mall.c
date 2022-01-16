@@ -7,6 +7,7 @@
 #include <omp.h>
 
 #include "../k-means/kmeans.h"
+#include "../k-medoids/kmedoids.h"
 #include "../rw-csv/rw.h"
 
 int main (int argc, char const *argv[]) {
@@ -61,28 +62,55 @@ int main (int argc, char const *argv[]) {
     double sil_score;
     int best_cluster = -1;
     
-    for (int i = 2; i < (n_clusters + 1); i++) {
-        k_means(data, data_size, max_iterations, i);
-        sil_score = silhouette_score(data, data_size, i);
-        printf("with a silhouette score of %.3f \n", sil_score);
-        if (best_silhouette < sil_score) {
-            best_silhouette = sil_score;
-            best_cluster = i;
-        }
-    }
+    // for (int i = 2; i < (n_clusters + 1); i++) {
+    //     k_means(data, data_size, max_iterations, i);
+    //     sil_score = silhouette_score(data, data_size, i);
+    //     printf("with a silhouette score of %.3f \n", sil_score);
+    //     if (best_silhouette < sil_score) {
+    //         best_silhouette = sil_score;
+    //         best_cluster = i;
+    //     }
+    // }
 
-    if (best_cluster == -1) {
-        perror("Correct number of clusters not found\n");
-        exit(1);
-    }
+    // if (best_cluster == -1) {
+    //     perror("Correct number of clusters not found\n");
+    //     exit(1);
+    // }
+
+    // double tstart, elapsed;
+    
+    // printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
+
+    // // Starting the timer for performance measurement
+    // tstart = omp_get_wtime();
+    // k_means(data, data_size, max_iterations, best_cluster);
+
+    // // Stopping the timer and print the result
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("Elapsed time %f\n", elapsed);
+
+    // for (int i = 2; i < (n_clusters + 1); i++) {
+        // k_medoids(data, data_size, i);
+        // sil_score = silhouette_score(data, data_size, i);
+    //     printf("with a silhouette score of %.3f \n", sil_score);
+    //     if (best_silhouette < sil_score) {
+    //         best_silhouette = sil_score;
+    //         best_cluster = i;
+    //     }
+    // }
+
+    // if (best_cluster == -1) {
+    //     perror("Correct number of clusters not found\n");
+    //     exit(1);
+    // }
 
     double tstart, elapsed;
     
-    printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
+    // printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
 
     // Starting the timer for performance measurement
     tstart = omp_get_wtime();
-    k_means(data, data_size, max_iterations, best_cluster);
+    k_medoids(data, data_size, 5);
 
     // Stopping the timer and print the result
     elapsed = omp_get_wtime() - tstart;

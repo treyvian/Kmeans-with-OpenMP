@@ -27,7 +27,7 @@ double euclidian_distance (point *p1, point *p2) {
     double distance = 0;
 
     for (int i = 0; i < p1->dimensions; ++i) {
-        dist += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
+        distance += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
     }
     
     return sqrt(distance);
@@ -42,10 +42,10 @@ double manhattan_distance (point *p1, point *p2) {
     double distance = 0;
 
     for (int i = 0; i < p1->dimensions; ++i) {
-        dist += abs(p2->x[i] - p1->x[i]);
+        distance += abs(p2->x[i] - p1->x[i]);
     } 
 
-    return distance
+    return distance;
 }
 
 void copy_point (point *o, point *p) {

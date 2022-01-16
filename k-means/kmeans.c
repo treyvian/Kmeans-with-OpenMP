@@ -133,7 +133,7 @@ void k_means (point *points,
 
 double silhouette_score (point *data, int n, int k) {
     
-    double Cohesion, mean_coh, Separation[k], mean_sep, sep, dist;
+    double Cohesion, mean_coh, Separation[k], mean_sep, sep, distance;
 
     double silhouette_score = 0;
     int cluster_number, n_clust[k];
