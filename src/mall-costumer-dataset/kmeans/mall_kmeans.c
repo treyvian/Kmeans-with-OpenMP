@@ -2,23 +2,19 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 
 #include <time.h> /* for time() */
 #include <omp.h>
 
-/*
-* Inclusion of my implementations
-*/
+// My Methods
 #include "../../k-means/kmeans.h"
 #include "../../silhouette-score/silhouette.h"
 #include "../../rw-csv/rw.h"
 
 int main (int argc, char const *argv[]) {
     
-    if (argc < 3) {
-		printf("Please specify the CSV file as an input.\n");
-		exit(1);
-	}
+    assert(argc >= 3);
 
 	int row = atoi(argv[1]);
 	int col = atoi(argv[2]);
@@ -34,6 +30,7 @@ int main (int argc, char const *argv[]) {
 	read_csv(row, col, fname, dat); 
 
     point *data = (point *)malloc((row - 1) * sizeof(point));
+    assert(data != NULL);
 
     double *supp_vector;
     int dimensions = 2;
@@ -54,10 +51,7 @@ int main (int argc, char const *argv[]) {
     const size_t data_size = row-1;
 
     int n_clusters = atoi(argv[4]);
-    if (n_clusters < 1) {
-        printf("Number of clusters inserted not valid\n");
-        exit(1);    
-    }
+    assert(n_clusters > 1);
 
     // KMeans implementations
     int max_iterations = 500;
@@ -75,11 +69,8 @@ int main (int argc, char const *argv[]) {
         }
     }
 
-    if (best_cluster == -1) {
-        perror("Correct number of clusters not found\n");
-        exit(1);
-    }
-
+    assert(best_cluster != -1);
+    
     double tstart, elapsed;
     
     printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);

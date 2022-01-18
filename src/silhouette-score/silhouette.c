@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "silhouette.h"
 
 
 double silhouette_score (point *data, int n, int k) {
+
+    assert(data != NULL);
     
     double Cohesion, mean_coh, Separation[k], mean_sep, sep, distance;
 
@@ -19,8 +22,6 @@ double silhouette_score (point *data, int n, int k) {
             Separation[t] = 0.0;
             n_clust[t] = 0;
         }
-        
-
 
         for (int j = 0; j < n; ++j) {
             if (i != j) {            

@@ -83,7 +83,7 @@ int main (int argc, char const *argv[]) {
 
     // Starting the timer for performance measurement 
     tstart = omp_get_wtime();
-    sil_score = silhouette_score(data, data_size, 6);
+    double sil_score = silhouette_score(data, data_size, 6);
 
     // Stopping the timer and print the result
     elapsed = omp_get_wtime() - tstart;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "kmeans.h"
 
@@ -9,21 +10,16 @@ void k_means (point *points,
                 const int epochs, 
                 const int k) {
     
-    if (points == NULL){
-        perror("Missing input data");
-        exit(1);
-    }
+    assert(points != NULL);
 
-    if (epochs <= 0) {
-        perror("Number of epochs not correct");
-        exit(1);
-    }
+    assert(epochs > 0);
 
     // for (int i = 0; i < n; i++) {
     //     reset_point(&points[i]);
     // }
 
     point *centroids = (point *)malloc(k * sizeof(point));
+    assert(centroids != NULL);
 
     int bool, random, iter, cluster_num;
     int points_dimensions = points->dimensions;
@@ -45,10 +41,14 @@ void k_means (point *points,
     }
     
     int *nPoints = (int *)malloc(k * sizeof(int));
+    assert(nPoints != NULL);
+
     double **sum = (double **)malloc(k * sizeof(double *));
+    assert(sum != NULL);
 
     for (int i = 0; i < k; ++i) {
 	    sum[i] = (double *)malloc(points_dimensions * sizeof(double));
+        assert(sum[i] != NULL);
 	}
         
     for (int t = 0; t<epochs; t++) {

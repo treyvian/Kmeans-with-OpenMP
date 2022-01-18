@@ -15,7 +15,16 @@ void k_medoids (point *points,
     }
 
     point *medoids = (point *)malloc(k * sizeof(point));
+    if (!medoids) {
+        perror("Malloc in kmedoids method returned null\n");
+        exit(1);
+    }
+
     point *best_medoids = (point *)malloc(k * sizeof(point));
+    if (!best_medoids) {
+        perror("Malloc in kmedoids method returned null\n");
+        exit(1);
+    }
 
     int random, iter, boolean;
     int points_dimensions = points->dimensions;

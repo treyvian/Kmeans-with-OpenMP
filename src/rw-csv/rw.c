@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <error.h>
 #include <string.h>
+#include <assert.h>
 
 #include "rw.h"
 
@@ -12,10 +13,7 @@ void read_csv (int row, int col, const char *filename, double **data) {
 	
     FILE *file;
 	file = fopen (filename, "r") ;
-    if(file == NULL) {
-      perror("Error opening file");
-      exit(1);
-    }
+    assert(file != NULL);
 
 	int i = 0;
     char line[4098];
@@ -45,10 +43,7 @@ void create_marks_csv(point *points, int n, const char *name, const char *header
     chdir("output/");
 
     fp = fopen(name,"w+");
-    
-    if (!fp) {    
-      error(EXIT_FAILURE, errno, "Failed to open file for writing");
-    }
+    assert(fp != NULL);
 
     fprintf(fp, header); 
 

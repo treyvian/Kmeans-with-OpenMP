@@ -15,8 +15,8 @@
 
 int main (int argc, char const *argv[]) {
     
-    if (argc < 3) {
-		printf("Please specify the CSV file as an input.\n");
+    if (argc == 3) {
+		perror("Please specify the CSV file as an input.\n");
 		exit(1);
 	}
 
@@ -26,24 +26,44 @@ int main (int argc, char const *argv[]) {
     strcpy(fname, argv[3]);
 
 	double **dat;
-	dat = (double **)malloc(row * sizeof(double *));
+	
+    dat = (double **)malloc(row * sizeof(double *));
+    if (!dat) {
+        perror("Heap allocation in mall_kmedoids not successful");
+        exit(1);
+    }
+
 	for (int i = 0; i < row; ++i){
 		dat[i] = (double *)malloc(col * sizeof(double));
+        if (!dat[i]) {
+            perror("Heap allocation in mall_kmedoids not successful");
+            exit(1);
+        }
 	}
 
 	read_csv(row, col, fname, dat); 
 
     point *data = (point *)malloc((row - 1) * sizeof(point));
+    if (!data) {
+        perror("Heap allocation of data in mall_kmedoids not successful");
+        exit(1);
+    }
 
     double *supp_vector;
     int dimensions = 2;
 
     for (int i = 1; i < row; ++i) {
-        supp_vector = (double *)malloc(dimensions * sizeof(double)); 
+        supp_vector = (double *)malloc(dimensions * sizeof(double));
+        if (!supp_vector) {
+            perror("Heap allocation of supp_vector in mall_kmedoids not successful");
+            exit(1);
+        }
+
         supp_vector[0] = (double) dat[i][3];
         supp_vector[1] = (double) dat[i][4];
         point_init(&data[i-1], supp_vector, dimensions);
     }
+
 
     // freeing memory for the array dat
     for (int i=0; i < row; i++) {

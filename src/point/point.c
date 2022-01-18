@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 
 #include "point.h"
 
 void point_init (point *p, double *x, int dimensions) {
-    
-    if (p == NULL){
-        perror("null pointer to the init function\n");   
-        exit(1);
-    }
+
+    assert(p != NULL || x != NULL);
 
     p->x = x;
     p->dimensions = dimensions;
@@ -19,10 +17,7 @@ void point_init (point *p, double *x, int dimensions) {
 
 double euclidian_distance (point *p1, point *p2) {
 
-    if (p1 == NULL || p2 == NULL) {
-        perror("null pointer in distance method\n");
-        exit(1);
-    }
+    assert(p1 != NULL || p2 != NULL);
 
     double distance = 0;
 
@@ -34,10 +29,7 @@ double euclidian_distance (point *p1, point *p2) {
 }
 
 double manhattan_distance (point *p1, point *p2) {
-    if (p1 == NULL || p2 == NULL) {
-        perror("null pointer in distance method\n");
-        exit(1);
-    }
+    assert(p1 != NULL || p2 != NULL);
 
     double distance = 0;
 
@@ -49,12 +41,13 @@ double manhattan_distance (point *p1, point *p2) {
 }
 
 void copy_point (point *o, point *p) {
-    if (o == NULL || p == NULL) {
-        perror("null pointer in copy method\n");
-        exit(1);
+    assert(o != NULL && p != NULL);
+
+    if (p->x == NULL) {
+        p->x = (double *)malloc(o->dimensions * sizeof(double));
+        assert(p->x != NULL); 
     }
 
-    p->x = (double *)malloc(o->dimensions * sizeof(double));
     for (int i = 0; i < o->dimensions; ++i) {
         p->x[i] = o->x[i];
     }
@@ -65,10 +58,7 @@ void copy_point (point *o, point *p) {
 
 
 void reset_point (point *p) {
-    if (p == NULL) {
-        perror("null pointer in reset method\n");
-        exit(-1);
-    }
+    assert(p != NULL);
 
     p->cluster = -1;
     p->min_distance = __DBL_MAX__;
@@ -76,9 +66,9 @@ void reset_point (point *p) {
 
 
 int equals (point *p1, point *p2){
+    
     if (p1 == NULL || p2 == NULL) {
-        perror("one of the pointers in input is null\n");
-        exit(1);
+        return 0;
     }
 
     if (p1 == p2) {
@@ -100,22 +90,20 @@ void print_point (point *p) {
 
     if(p == NULL){
         printf("Pointer is null");
-        
-    } else {
-
-        printf("(");
+        return;
+    }    
     
-        for (int i=0; i < p->dimensions; i++) {
-            printf("%f ", p->x[i]);
-        }
-
-        printf(")\n");
+    printf("(");
+    
+    for (int i=0; i < p->dimensions; i++) {
+        printf("%f ", p->x[i]);
     }
+
+    printf(")\n");
 }
 
 void delete_x (point *p) {
     if (p == NULL) {
-        perror("null pointer in delete method\n");
         return;
     }
 
