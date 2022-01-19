@@ -14,10 +14,6 @@ void k_means (point *points,
 
     assert(epochs > 0);
 
-    // for (int i = 0; i < n; i++) {
-    //     reset_point(&points[i]);
-    // }
-
     point *centroids = (point *)malloc(k * sizeof(point));
     assert(centroids != NULL);
 

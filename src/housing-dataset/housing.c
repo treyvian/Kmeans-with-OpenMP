@@ -9,9 +9,10 @@
 /*
 * Inclusion of my implementations
 */
-#include "../../k-means/kmeans.h"
-#include "../../silhouette-score/silhouette.h"
-#include "../../rw-csv/rw.h"
+#include "../k-means/kmeans.h"
+#include "../k-medoids/kmedoids.h"
+#include "../silhouette-score/silhouette.h"
+#include "../rw-csv/rw.h"
 
 
 int main (int argc, char const *argv[]) {
@@ -99,6 +100,34 @@ int main (int argc, char const *argv[]) {
 
     // Creating the file in output
     create_marks_csv(data, data_size, filename, header);
+
+     // Starting the timer for performance measurement
+    tstart = omp_get_wtime();
+
+    // Clustering the dataset
+    k_medoids(data, data_size, 6);
+
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time kmedoids %f\n", elapsed);
+
+    // Starting the timer for performance measurement 
+    tstart = omp_get_wtime();
+    double sil_score = silhouette_score(data, data_size, 6);
+
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time silhouette %f\n", elapsed);
+
+    // Header of the csv file in output
+    const char *header = "MedInc,Latitude,Longitude,Cluster\n";
+
+    // Name of the csv file in output
+    const char *filename = "output_housing_kmedoids.csv";
+    
+    // Creating the file in output
+    create_marks_csv(data, data_size, filename, header);
+
     
     // Freeing memory for the array data
     for (int i = 0; i < data_size; ++i) {
