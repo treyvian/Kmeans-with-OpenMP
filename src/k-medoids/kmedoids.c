@@ -10,10 +10,7 @@ void k_medoids (point *points,
                         const int n, 
                         const int k) {
 
-    if (points == NULL){
-        perror("Missing input data");
-        exit(1);
-    }
+    assert(points != NULL);
 
     point *medoids = (point *)malloc(k * sizeof(point));
     assert(medoids != NULL);
@@ -43,6 +40,7 @@ void k_medoids (point *points,
     double total_cost = __DBL_MAX__;
 
     double distance, new_total_cost;
+
 
     for (int i=0; i<k; ++i) {
         copy_point(&medoids[i], &best_medoids[i]);

@@ -55,5 +55,6 @@ void create_marks_csv(point *points, int n, const char *name, const char *header
     }   
     
     fclose(fp);
-    printf("\n output.csv file created\n");
+    printf("output.csv file created\n");
+    printf("\n");
 }

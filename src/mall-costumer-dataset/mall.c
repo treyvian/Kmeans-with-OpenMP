@@ -7,7 +7,9 @@
 #include <time.h> /* for time() */
 #include <omp.h>
 
-// My Methods
+/*
+* My methods
+*/
 #include "../k-means/kmeans.h"
 #include "../k-medoids/kmedoids.h"
 #include "../silhouette-score/silhouette.h"
@@ -22,28 +24,34 @@ int main (int argc, char const *argv[]) {
 	char fname[256];	
     strcpy(fname, argv[3]);
 
+    // Support array for storing the data from the csv file
 	double **dat;
 	dat = (double **)malloc(row * sizeof(double *));
 	for (int i = 0; i < row; ++i){
 		dat[i] = (double *)malloc(col * sizeof(double));
 	}
 
+    // Reading the csv file
 	read_csv(row, col, fname, dat); 
 
+    // Bi-dimensional array for storing the the data to work with
     point *data = (point *)malloc((row - 1) * sizeof(point));
     assert(data != NULL);
 
     double *supp_vector;
     int dimensions = 2;
 
+    // Initialize the data array with one point for each row
     for (int i = 1; i < row; ++i) {
         supp_vector = (double *)malloc(dimensions * sizeof(double)); 
+        assert(supp_vector != NULL);
+
         supp_vector[0] = (double) dat[i][3];
         supp_vector[1] = (double) dat[i][4];
         point_init(&data[i-1], supp_vector, dimensions);
     }
 
-    // freeing memory for the array dat
+    // Freeing memory for the array dat
     for (int i=0; i < row; i++) {
         free(dat[i]);
     }
@@ -86,10 +94,10 @@ int main (int argc, char const *argv[]) {
     elapsed = omp_get_wtime() - tstart;
     printf("Elapsed time %f\n", elapsed);
 
-    const char *header_kmeans = "X,Y,Cluster\n";
-    const char *filename_kmeans = "output_mall_kmeans.csv";
+    const char *header = "X,Y,Cluster\n";
+    const char *filename = "output_mall_kmeans.csv";
     
-    create_marks_csv(data, data_size, filename_kmeans, header_kmeans);
+    create_marks_csv(data, data_size, filename, header);
 
     /*
     * K-medoids
@@ -114,7 +122,7 @@ int main (int argc, char const *argv[]) {
     }
     
     printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
-
+    
     // Starting the timer for performance measurement
     tstart = omp_get_wtime();
     k_medoids(data, data_size, best_cluster);
@@ -123,13 +131,13 @@ int main (int argc, char const *argv[]) {
     elapsed = omp_get_wtime() - tstart;
     printf("Elapsed time %f\n", elapsed);
 
-    const char *header_kmedoids = "X,Y,Cluster\n";
-    const char *filename_kmedoids = "output_mall_kmedoids.csv";
+    const char *header_p = "X,Y,Cluster\n";
+    const char *filename_p = "output_mall_kmedoids.csv";
     
-    create_marks_csv(data, data_size, filename_kmedoids, header_kmedoids);
+    // Creating the file in output
+    create_marks_csv(data, data_size, filename_p, header_p);
     
     // Freeing memory for the array data
-
     for (int i = 0; i < data_size; ++i) {
         delete_x(&data[i]);
     }

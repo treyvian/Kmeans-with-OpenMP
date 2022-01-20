@@ -50,7 +50,7 @@ void k_means (point *points,
     for (int t = 0; t<epochs; t++) {
         double dist;
 
-                // Initialise with zeroes
+        // Initialise with zeroes
         for (int j = 0; j < k; ++j) {
             nPoints[j] = 0;
             for (int i = 0; i< points_dimensions; i++) {
@@ -106,7 +106,7 @@ void k_means (point *points,
             free(centroids); 
             free(nPoints); 
 
-            printf("With %d clusters, it ran for %d number of iterations\n", k, iter);
+            printf("With %d clusters, it ran for %d iterations\n", k, iter);
             return;
         }
 

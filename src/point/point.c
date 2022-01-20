@@ -43,10 +43,10 @@ double manhattan_distance (point *p1, point *p2) {
 void copy_point (point *o, point *p) {
     assert(o != NULL && p != NULL);
 
-    if (p->x == NULL) {
-        p->x = (double *)malloc(o->dimensions * sizeof(double));
-        assert(p->x != NULL); 
-    }
+    if (p->x == NULL);
+
+    p->x = (double *)malloc(o->dimensions * sizeof(double));
+    assert(p->x != NULL); 
 
     for (int i = 0; i < o->dimensions; ++i) {
         p->x[i] = o->x[i];
@@ -65,28 +65,24 @@ void reset_point (point *p) {
 }
 
 
-int equals (point *p1, point *p2){
-    
-    if (p1 == NULL || p2 == NULL) {
-        return 0;
-    }
+int equals (const point *p1, const point *p2){
 
-    if (p1 == p2) {
-        return 1;
-    }
+    assert(p1 != NULL && p2 != NULL);
 
-    if (p1->dimensions != p2-> dimensions) {
-        return 0;
-    }
+    const point* d1 = p1;
+    const point* d2 = p2;
+    double diff = 0.0;
+
     for (int i = 0; i < p1->dimensions; ++i) {
-        if (p1->x[i] != p2->x[i]) {
+        diff += d1->x[i] - d2->x[i]; 
+        if (diff != 0) {
             return 0;
         }
     }
     return 1;
 }
 
-void print_point (point *p) {
+void print_point (const point *p) {
 
     if(p == NULL){
         printf("Pointer is null");

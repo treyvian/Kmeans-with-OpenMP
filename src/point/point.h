@@ -18,9 +18,9 @@ void copy_point (point *, point *);
 
 void reset_point (point *);
 
-int equals (point *, point *);
+int equals (const point *, const point *);
 
-void print_point (point *);
+void print_point (const point *);
 
 void delete_x(point *);
 
