@@ -14,7 +14,7 @@ void k_means (point *points,
 
     assert(epochs > 0);
 
-    point *centroids = (point *)malloc(k * sizeof(point));
+    point *centroids = (point *)calloc(k, sizeof(point));
     assert(centroids != NULL);
 
     int bool, random, iter, cluster_num;
@@ -32,7 +32,7 @@ void k_means (point *points,
             }    
         }
         if (bool) {
-            copy_point(&points[random], &centroids[i]);
+            copy_point(&centroids[i], &points[random]);
         }
     }
     
@@ -100,7 +100,7 @@ void k_means (point *points,
             // Freeing points, sum and centroids
             for (int i = 0; i < k; ++i) {
                 free(sum[i]);
-                delete_x(&centroids[i]);
+                delete_point(&centroids[i]);
             }
             free(sum);
             free(centroids); 
@@ -118,7 +118,7 @@ void k_means (point *points,
     // Freeing points, sum and centroids
     for (int i = 0; i < k; ++i) {
         free(sum[i]);
-        delete_x(&centroids[i]);
+        delete_point(&centroids[i]);
     }
     free(sum);
     free(centroids); 

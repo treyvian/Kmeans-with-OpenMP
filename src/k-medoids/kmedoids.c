@@ -12,10 +12,10 @@ void k_medoids (point *points,
 
     assert(points != NULL);
 
-    point *medoids = (point *)malloc(k * sizeof(point));
+    point *medoids = (point *)calloc(k, sizeof(point));
     assert(medoids != NULL);
 
-    point *best_medoids = (point *)malloc(k * sizeof(point));
+    point *best_medoids = (point *)calloc(k, sizeof(point));
     assert(best_medoids != NULL);
 
     int random, iter, boolean;
@@ -33,7 +33,7 @@ void k_medoids (point *points,
             }    
         }
         if (boolean) {
-            copy_point(&points[random], &medoids[i]);
+            copy_point(&medoids[i], &points[random]);
         }
     }
 
@@ -43,7 +43,7 @@ void k_medoids (point *points,
 
 
     for (int i=0; i<k; ++i) {
-        copy_point(&medoids[i], &best_medoids[i]);
+        copy_point(&best_medoids[i], &medoids[i]);
     }
 
     for (int i = 0; i<k; ++i){
@@ -51,7 +51,7 @@ void k_medoids (point *points,
             if (!equals(&points[j], &medoids[i])) {            
                 new_total_cost = 0;
                 distance = 0;
-                copy_point(&points[j], &medoids[i]);
+                copy_point(&medoids[i], &points[j]);
         
                 for (int t = 0; t < n; ++t) {
                     for (int r = 0; r < k; ++r) {
@@ -68,13 +68,13 @@ void k_medoids (point *points,
 
                 if (total_cost > new_total_cost) {
                     total_cost = new_total_cost;
-                    copy_point(&points[j], &best_medoids[i]);
+                    copy_point(&best_medoids[i], &points[j]);
                 } else {
-                    copy_point(&best_medoids[i], &medoids[i]);
+                    copy_point(&medoids[i], &best_medoids[i]);
                 }
             }                      
         }
-        copy_point(&best_medoids[i], &medoids[i]);
+        copy_point(&medoids[i], &best_medoids[i]);
     }
 
     for (int i = 0; i < n; ++i) {
@@ -97,8 +97,8 @@ void k_medoids (point *points,
 
     // TODO: check valgrind error
     for (int i = 0; i < k; ++i) {
-        delete_x(&best_medoids[i]);
-        delete_x(&medoids[i]);
+        delete_point(&best_medoids[i]);
+        delete_point(&medoids[i]);
     }
     free(best_medoids);
     free(medoids);

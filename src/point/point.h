@@ -14,7 +14,7 @@ double euclidian_distance (point *, point *);
 
 double manhattan_distance (point *, point *);
 
-void copy_point (point *, point *);
+void copy_point (point *, const point *);
 
 void reset_point (point *);
 
@@ -22,6 +22,6 @@ int equals (const point *, const point *);
 
 void print_point (const point *);
 
-void delete_x(point *);
+void delete_point(point *);
 
 #endif

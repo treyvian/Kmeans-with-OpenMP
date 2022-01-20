@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include <assert.h>
 
 #include "point.h"
 
 void point_init (point *p, double *x, int dimensions) {
 
-    assert(p != NULL || x != NULL);
+    assert(p != NULL && x != NULL);
 
     p->x = x;
     p->dimensions = dimensions;
@@ -17,7 +18,7 @@ void point_init (point *p, double *x, int dimensions) {
 
 double euclidian_distance (point *p1, point *p2) {
 
-    assert(p1 != NULL || p2 != NULL);
+    assert(p1 != NULL && p2 != NULL);
 
     double distance = 0;
 
@@ -40,20 +41,19 @@ double manhattan_distance (point *p1, point *p2) {
     return distance;
 }
 
-void copy_point (point *o, point *p) {
-    assert(o != NULL && p != NULL);
+void copy_point (point *dst, const point *src) {
+    assert(src != NULL && dst != NULL);
 
-    if (p->x == NULL);
-
-    p->x = (double *)malloc(o->dimensions * sizeof(double));
-    assert(p->x != NULL); 
-
-    for (int i = 0; i < o->dimensions; ++i) {
-        p->x[i] = o->x[i];
+    if (dst->x == NULL) {
+        dst->x = calloc(src->dimensions, sizeof(double));
     }
-    p->dimensions = o->dimensions;
-    p->cluster = o->cluster;
-    p->min_distance = o->min_distance;
+
+    for (int i = 0; i < src->dimensions; ++i) {
+        dst->x[i] = src->x[i];
+    }
+    dst->dimensions = src->dimensions;
+    dst->cluster = src->cluster;
+    dst->min_distance = src->min_distance;
 }
 
 
@@ -98,7 +98,7 @@ void print_point (const point *p) {
     printf(")\n");
 }
 
-void delete_x (point *p) {
+void delete_point (point *p) {
     if (p == NULL) {
         return;
     }

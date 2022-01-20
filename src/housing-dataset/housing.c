@@ -123,7 +123,7 @@ int main (int argc, char const *argv[]) {
     
     // Freeing memory for the array data
     for (int i = 0; i < data_size; ++i) {
-        delete_x(&data[i]);
+        delete_point(&data[i]);
     }
     free(data);
 
