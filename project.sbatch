@@ -9,3 +9,4 @@
 #SBATCH --gres=gpu:1
 
 sh launch_mall.sh
+sh launch_house.sh

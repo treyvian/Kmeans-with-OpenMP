@@ -7,7 +7,7 @@ Project for Architectures for Artificial Intelligence module 2.
 - [Abstract](#abstract)
 - [Technologies](#tech)
 - [Requisites](#requisites)
-- [How to Run](#how-to-run)
+- [Usage](#usage)
 - [Clustering Algorithms](#clustering-algorithms)
   - [k-means](#k-means)
   - [k-means](#k-medoids)
@@ -22,13 +22,34 @@ Project for Architectures for Artificial Intelligence module 2.
 
 This project is built using:
 
-- [Openmp](https://www.openmp.org/) - an API that supports multi-platform shared-memory multiprocessing programming in C, C++, and Fortran.
+- [OpenMp](https://www.openmp.org/) - an API that supports multi-platform shared-memory multiprocessing programming in C, C++, and Fortran.
 
 - [Valgrind](https://valgrind.org/) - All the code has been checked to prevent memory leaks and memory errors.
 
 ## Requisites
 
-## How to run
+- `gcc (GCC)` v11.1+
+- `OpenMp` v13+
+
+In case you want to run the two python files in for visualizing the output you will need apart from `python` also the two libraries `matplotlib` and `pandas` installed.
+
+## Usage
+
+In order to run the project you can use the two sh file in the root directory.
+
+To execute the one relative to the mall customer dataset run 
+
+```
+sh launch_mall.sh
+```
+
+The execute the one relative to the California housing dataset run 
+
+```
+sh launch_house.sh
+```
+
+Both will run the Makefiles and generate the output inside the [output](output/) directory in the root folder.
 
 ## Clustering Algorithms
 

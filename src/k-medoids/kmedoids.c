@@ -89,11 +89,6 @@ void k_medoids (point *points,
            
         points[i].min_distance = __DBL_MAX__;
     }
-    
-    for (int j = 0; j < k; ++j) {
-        print_point(&best_medoids[j]);
-    }
-    printf("Best cost:%f\n",total_cost);
 
     // TODO: check valgrind error
     for (int i = 0; i < k; ++i) {

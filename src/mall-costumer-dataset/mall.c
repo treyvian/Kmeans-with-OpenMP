@@ -72,8 +72,9 @@ int main (int argc, char const *argv[]) {
     
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_means(data, data_size, max_iterations, i);
+        
         sil_score = silhouette_score(data, data_size, i);
-        printf("with a silhouette score of %.3f \n", sil_score);
+        
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -83,17 +84,25 @@ int main (int argc, char const *argv[]) {
     assert(best_cluster != -1);
     
     double tstart, elapsed;
-    
-    printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
 
-    // Starting the timer for performance measurement
+    // Starting the timer for kmeans
     tstart = omp_get_wtime();
     k_means(data, data_size, max_iterations, best_cluster);
 
-    // Stopping the timer and print the result
+    // Stopping the timer for kmeans
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time %f\n", elapsed);
+    printf("Elapsed time kmeans %f ", elapsed);
 
+    // Starting the timer for silhouette score
+    tstart = omp_get_wtime();
+    silhouette_score(data, data_size, best_cluster);
+
+    // Stopping the timer for silhouette score
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time silhouette %f\n", elapsed);
+
+
+    // Create output csv file for kmeans
     const char *header = "X,Y,Cluster\n";
     const char *filename = "output_mall_kmeans.csv";
     
@@ -109,28 +118,31 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_medoids(data, data_size, i);
         sil_score = silhouette_score(data, data_size, i);
-        printf("with a silhouette score of %.3f \n", sil_score);
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
         }
     }
 
-    if (best_cluster == -1) {
-        perror("Correct number of clusters not found\n");
-        exit(1);
-    }
+    assert(best_cluster != -1);
     
-    printf("Best number of clusters: %d, with silhouette score of: %f \n", best_cluster, best_silhouette);
-    
-    // Starting the timer for performance measurement
+    // Starting the timer for kmedoids
     tstart = omp_get_wtime();
     k_medoids(data, data_size, best_cluster);
 
-    // Stopping the timer and print the result
+    // Stopping the timer for kmedoids
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time %f\n", elapsed);
+    printf("Elapsed time kmedoids %f ", elapsed);
 
+    // Starting the timer for silhouette score
+    tstart = omp_get_wtime();
+    silhouette_score(data, data_size, best_cluster);
+
+    // Stopping the timer for silhouette score
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time silhouette %f\n", elapsed);
+
+    // Create output csv file for kmedoids
     const char *header_p = "X,Y,Cluster\n";
     const char *filename_p = "output_mall_kmedoids.csv";
     

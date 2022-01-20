@@ -1,12 +1,16 @@
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
 import pandas as pd
-import seaborn as sns
 
-df = pd.read_csv("output.csv",sep=',')
+df = pd.read_csv("output_house_kmeans.csv",sep=',')
 
 plt.figure()
+plt.title("kmeans output")
+plt.scatter(df['Longitude'], df['Latitude'], c=df['Cluster'],cmap='rainbow')
+
+df = pd.read_csv("output_housing_kmedoids.csv",sep=',')
+
+plt.figure()
+plt.title("kmedoids output")
 plt.scatter(df['Longitude'], df['Latitude'], c=df['Cluster'],cmap='rainbow')
 plt.show()
-
 

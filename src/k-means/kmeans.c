@@ -105,15 +105,12 @@ void k_means (point *points,
             free(sum);
             free(centroids); 
             free(nPoints); 
-
-            printf("With %d clusters, it ran for %d iterations\n", k, iter);
+            
             return;
         }
 
         iter = t + 1;
     }
-
-    printf("With %d clusters, it ran for %d number of iterations\n", k, iter);
     
     // Freeing points, sum and centroids
     for (int i = 0; i < k; ++i) {

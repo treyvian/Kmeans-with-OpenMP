@@ -35,8 +35,6 @@ void read_csv (int row, int col, const char *filename, double **data) {
 }
 
 void create_marks_csv(point *points, int n, const char *name, const char *header){
- 
-    printf("Creating output.csv file\n");
     
     FILE *fp;
 
@@ -55,6 +53,4 @@ void create_marks_csv(point *points, int n, const char *name, const char *header
     }   
     
     fclose(fp);
-    printf("output.csv file created\n");
-    printf("\n");
 }
