@@ -3,3 +3,7 @@ src/rw-csv/rw.o
 src/silhouette-score/silhouette.o
 src/k-medoids/kmedoids.o
 src/k-means/kmeans.o
+src/mall-customer-dataset/mall.o
+src/mall-customer-dataset/out
+src/house-dataset/out
+src/house-dataset/house.o

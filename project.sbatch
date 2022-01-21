@@ -8,5 +8,5 @@
 #SBATCH --output=nomeoutput
 #SBATCH --gres=gpu:1
 
-sh launch_mall.sh
+./launch_mall
 sh launch_house.sh

@@ -46,13 +46,14 @@ void k_medoids (point *points,
         copy_point(&best_medoids[i], &medoids[i]);
     }
 
+    #pragma omp parallel for collapse(2) private(distance) firstprivate(medoids) schedule(static)
     for (int i = 0; i<k; ++i){
         for (int j = 0; j<n; ++j){
             if (!equals(&points[j], &medoids[i])) {            
                 new_total_cost = 0;
                 distance = 0;
                 copy_point(&medoids[i], &points[j]);
-        
+
                 for (int t = 0; t < n; ++t) {
                     for (int r = 0; r < k; ++r) {
                         distance = manhattan_distance(&medoids[r], &points[t]);
@@ -63,20 +64,25 @@ void k_medoids (point *points,
                     }
 
                     new_total_cost += points[t].min_distance; 
+
                     points[t].min_distance = __DBL_MAX__;
                 }
 
-                if (total_cost > new_total_cost) {
-                    total_cost = new_total_cost;
-                    copy_point(&best_medoids[i], &points[j]);
-                } else {
-                    copy_point(&medoids[i], &best_medoids[i]);
-                }
+                #pragma omp critical
+                {
+                    if (total_cost > new_total_cost) {
+                        total_cost = new_total_cost;
+                        copy_point(&best_medoids[i], &points[j]);
+                    } else {
+                        copy_point(&medoids[i], &best_medoids[i]);
+                    }
+                }    
             }                      
         }
         copy_point(&medoids[i], &best_medoids[i]);
     }
 
+    #pragma omp parallel for collapse(2) private(distance) schedule(static)
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < k; ++j) {
             distance = manhattan_distance(&best_medoids[j], &points[i]);
@@ -90,7 +96,6 @@ void k_medoids (point *points,
         points[i].min_distance = __DBL_MAX__;
     }
 
-    // TODO: check valgrind error
     for (int i = 0; i < k; ++i) {
         delete_point(&best_medoids[i]);
         delete_point(&medoids[i]);

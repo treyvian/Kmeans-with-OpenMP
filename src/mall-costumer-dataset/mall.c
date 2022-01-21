@@ -91,7 +91,7 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for kmeans
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time kmeans %f ", elapsed);
+    printf("Time kmeans %f ", elapsed);
 
     // Starting the timer for silhouette score
     tstart = omp_get_wtime();
@@ -99,7 +99,7 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time silhouette %f\n", elapsed);
+    printf("Time silhouette %f\n", elapsed);
 
 
     // Create output csv file for kmeans
@@ -132,7 +132,7 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for kmedoids
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time kmedoids %f ", elapsed);
+    printf("Time kmedoids %f ", elapsed);
 
     // Starting the timer for silhouette score
     tstart = omp_get_wtime();
@@ -140,7 +140,7 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time silhouette %f\n", elapsed);
+    printf("Time silhouette %f\n", elapsed);
 
     // Create output csv file for kmedoids
     const char *header_p = "X,Y,Cluster\n";

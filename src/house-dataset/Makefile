@@ -6,11 +6,11 @@ RW = ../rw-csv/
 
 all: out
 
-out: housing.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o
-	gcc -fopenmp -o out housing.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o -lm
+out: house.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o
+	gcc -fopenmp -o out house.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o -lm
 
-housing.o: housing.c
-	gcc -c housing.c
+house.o: house.c
+	gcc -c house.c
 
 point.o: 
 	make -C $(POINT)
@@ -30,4 +30,4 @@ rw.o:
 
 clean:
 	rm out
-	rm housing.o
+	rm house.o

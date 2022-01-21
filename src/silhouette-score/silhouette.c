@@ -8,13 +8,16 @@
 double silhouette_score (point *data, int n, int k) {
 
     assert(data != NULL);
-    
-    double Cohesion, mean_coh, Separation[k], mean_sep, sep, distance;
 
     double silhouette_score = 0;
-    int cluster_number, n_clust[k];
 
+    #pragma omp parallel for reduction(+:silhouette_score) schedule(static)
     for (int i=0; i < n; ++i) {
+        
+        double Cohesion, mean_coh, Separation[k], mean_sep, sep, distance;
+
+        int cluster_number, n_clust[k];
+
         Cohesion = 0;
         cluster_number = data[i].cluster;
         
@@ -34,7 +37,7 @@ double silhouette_score (point *data, int n, int k) {
                 } else {
                     Separation[data[j].cluster] += distance;
                     n_clust[data[j].cluster]++;
-                }
+                }    
             }    
         }
 

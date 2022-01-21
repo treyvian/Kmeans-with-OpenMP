@@ -48,7 +48,7 @@ void k_means (point *points,
 	}
         
     for (int t = 0; t<epochs; t++) {
-        double dist;
+        double distance;
 
         // Initialise with zeroes
         for (int j = 0; j < k; ++j) {
@@ -59,27 +59,31 @@ void k_means (point *points,
         }
 
         // Updating the distance of each point with respect to the current centroids
+        #pragma omp parallel for private(distance, cluster_num) schedule(static)
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < k; ++j) {
-                dist = euclidian_distance(&centroids[j], &points[i]);
+                distance = euclidian_distance(&centroids[j], &points[i]);
 
-                if (dist < points[i].min_distance){
-                    points[i].min_distance = dist;
+                if (distance < points[i].min_distance){
+                    points[i].min_distance = distance;
                     points[i].cluster = j;
                     cluster_num = j; 
                 }
             }
 
             // Iterate over points to append data to centroids
-            nPoints[cluster_num]++;
+            #pragma omp critical 
+            {
+                nPoints[cluster_num]++;
             
-            for (int j = 0; j < points_dimensions; ++j) {
-                sum[cluster_num][j] += points[i].x[j]; 
+                for (int j = 0; j < points_dimensions; ++j) {
+                    sum[cluster_num][j] += points[i].x[j]; 
+                }
+            
+                points[i].min_distance = __DBL_MAX__;
             }
-            
-            points[i].min_distance = __DBL_MAX__;
         }
-
+        
         bool = 1;
 
         // Compute new centroids
