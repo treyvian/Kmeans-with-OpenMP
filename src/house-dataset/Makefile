@@ -1,28 +1,17 @@
 POINT = ../point/
-KMEANS = ../k-means/
-KMEDOIDS = ../k-medoids/
-SILHOUETTE = ../silhouette-score/
 RW = ../rw-csv/
+OBJ_FILES = house.o $(POINT)point.o $(RW)rw.o
 
 all: out
 
-out: house.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o
-	gcc -fopenmp -o out house.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o -lm
+out: $(OBJ_FILES)
+	gcc -o out $(OBJ_FILES) -lm -fopenmp
 
 house.o: house.c
-	gcc -fopenmp -c house.c
+	gcc -c house.c -fopenmp
 
 point.o: 
 	make -C $(POINT)
-
-kmeans.o: 
-	make -C $(KMEANS)
-
-kmedoids.o:
-	make -C $(KMEDOIDS)
-
-silhouette.o: 
-	make -C $(SILHOUETTE)
 
 rw.o: 
 	make -C $(RW)
@@ -31,3 +20,5 @@ rw.o:
 clean:
 	rm out
 	rm house.o
+	make clean -C $(POINT)
+	make clean -C $(RW)

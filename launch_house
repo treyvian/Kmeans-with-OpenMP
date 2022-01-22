@@ -7,7 +7,7 @@ make -C src/house-dataset
 # Keep in mind it will take a lot of time
 # OMP_NUM_THREADS=1 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./src/housing-dataset/out 20641 9 data/housing.csv
 
-CORES=12
+CORES=6
 
 for p in `seq ${CORES}`; do
     OMP_NUM_THREADS=$p ./src/house-dataset/out 20641 9 data/housing.csv

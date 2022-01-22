@@ -6,7 +6,7 @@ make -C src/mall-costumer-dataset
 # For valgrind execution
 # OMP_NUM_THREADS=1 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./src/mall-costumer-dataset/out 201 5 data/Mall_Customers.csv 10 
 
-CORES=12
+CORES=6
 
 for p in `seq ${CORES}`; do
     for rep in `seq 5`; do 
