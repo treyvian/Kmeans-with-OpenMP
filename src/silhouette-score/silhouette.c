@@ -1,13 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <omp.h>
 
 #include "silhouette.h"
-
 
 double silhouette_score (point *data, int n, int k) {
 
     assert(data != NULL);
+    
+    int numThreads = omp_get_num_threads();
+    printf("%d", numThreads);
+    omp_set_num_threads(numThreads);
+
+    omp_set_nested(1);
+
 
     double silhouette_score = 0;
 
@@ -26,6 +33,7 @@ double silhouette_score (point *data, int n, int k) {
             n_clust[t] = 0;
         }
 
+        #pragma omp parallel for reduction(+:Cohesion, Separation[:k], n_clust[:k]) schedule(static)
         for (int j = 0; j < n; ++j) {
             if (i != j) {            
                 distance = euclidian_distance(&data[i], &data[j]);

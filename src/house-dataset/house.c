@@ -96,29 +96,29 @@ int main (int argc, char const *argv[]) {
     /*
     * K-medoids
     */
-    // Starting the timer for performance measurement
-    tstart = omp_get_wtime();
+    // // Starting the timer for performance measurement
+    // tstart = omp_get_wtime();
 
-    // Clustering the dataset
-    k_medoids(data, data_size, 6);
+    // // Clustering the dataset
+    // k_medoids(data, data_size, 6);
 
-    // Stopping the timer and print the result
-    elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time kmedoids %f\n", elapsed);
+    // // Stopping the timer and print the result
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("Elapsed time kmedoids %f\n", elapsed);
 
-    // Starting the timer for performance measurement 
-    tstart = omp_get_wtime();
-    sil_score = silhouette_score(data, data_size, 6);
+    // // Starting the timer for performance measurement 
+    // tstart = omp_get_wtime();
+    // sil_score = silhouette_score(data, data_size, 6);
 
-    // Stopping the timer and print the result
-    elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time silhouette %f\n", elapsed);
+    // // Stopping the timer and print the result
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("Elapsed time silhouette %f\n", elapsed);
 
-    header = "MedInc,Latitude,Longitude,Cluster\n";
-    filename = "output_housing_kmedoids.csv";
+    // header = "MedInc,Latitude,Longitude,Cluster\n";
+    // filename = "output_housing_kmedoids.csv";
     
-    // Creating the file in output
-    create_marks_csv(data, data_size, filename, header);
+    // // Creating the file in output
+    // create_marks_csv(data, data_size, filename, header);
 
     
     // Freeing memory for the array data

@@ -10,7 +10,7 @@ out: house.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOU
 	gcc -fopenmp -o out house.o $(POINT)/point.o $(KMEANS)/kmeans.o $(KMEDOIDS)/kmedoids.o $(SILHOUETTE)/silhouette.o $(RW)/rw.o -lm
 
 house.o: house.c
-	gcc -c house.c
+	gcc -fopenmp -c house.c
 
 point.o: 
 	make -C $(POINT)

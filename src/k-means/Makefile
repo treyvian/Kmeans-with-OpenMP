@@ -1,2 +1,2 @@
 kmeans.o: kmeans.c
-	gcc -c kmeans.c
+	gcc -fopenmp -c kmeans.c 

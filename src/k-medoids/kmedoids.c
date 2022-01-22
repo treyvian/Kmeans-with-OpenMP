@@ -2,6 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <omp.h>
 
 #include "kmedoids.h"
 
@@ -46,7 +47,7 @@ void k_medoids (point *points,
         copy_point(&best_medoids[i], &medoids[i]);
     }
 
-    #pragma omp parallel for collapse(2) private(distance) firstprivate(medoids) schedule(static)
+    #pragma omp parallel for private(distance) firstprivate(medoids) schedule(static)
     for (int i = 0; i<k; ++i){
         for (int j = 0; j<n; ++j){
             if (!equals(&points[j], &medoids[i])) {            
@@ -79,6 +80,8 @@ void k_medoids (point *points,
                 }    
             }                      
         }
+
+        #pragma omp atomic
         copy_point(&medoids[i], &best_medoids[i]);
     }
 

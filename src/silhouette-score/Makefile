@@ -1,2 +1,2 @@
 silhouette.o: silhouette.c
-	gcc -c silhouette.c
+	gcc -fopenmp -c silhouette.c 
