@@ -15,3 +15,5 @@ for p in `seq ${CORES}`; do
     done
     echo "-----------------------------------------------------------"
 done
+
+make clean -C src/mall-costumer-dataset

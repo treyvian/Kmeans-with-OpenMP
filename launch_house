@@ -10,6 +10,9 @@ make -C src/house-dataset
 CORES=6
 
 for p in `seq ${CORES}`; do
-    OMP_NUM_THREADS=$p ./src/house-dataset/out 20641 9 data/housing.csv
-    echo "-----------------------------------------------------------"
+    for rep in `seq 3`; do 
+        OMP_NUM_THREADS=$p ./src/house-dataset/out 20641 9 data/housing.csv
+        echo "-----------------------------------------------------------"
+    done
+    echo ""
 done
