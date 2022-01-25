@@ -2,6 +2,13 @@
 
 #define POINT_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <assert.h>
+#include <omp.h>
+
 /*
 * Struct that represent a point in the dataset
 */

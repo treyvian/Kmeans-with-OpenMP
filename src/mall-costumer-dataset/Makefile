@@ -15,7 +15,7 @@ mall.o:
 	gcc -c mall.c -fopenmp -o mall.o
 
 point.o: 
-	gcc -c $(POINT)point.c -fopenmp -o ./point.o
+	gcc -c $(POINT)point.c -o ./point.o
 
 kmeans.o: 
 	gcc -c $(KMEANS)kmeans.c -fopenmp -o ./kmeans.o

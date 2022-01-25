@@ -12,51 +12,44 @@ void k_means (point *points,
     point *centroids = (point *)calloc(k, sizeof(point));
     assert(centroids != NULL);
 
-    int bool, random, iter, cluster_num;
+    int boolean, random;
     int points_dimensions = points->dimensions;
 
     srand(time(0));
     for (int i = 0; i < k; i++) {
-        bool = 1;
+        boolean = 1;
         random = rand() % n;
+        
         for (int j = 0; j < i; j++) {
             if (equals(&points[random], &centroids[j])) {
-                bool = 0;
+                boolean = 0;
                 i--;
                 break;
             }    
         }
-        if (bool) {
+        if (boolean) {
             copy_point(&centroids[i], &points[random]);
         }
     }
     
-    int *nPoints = (int *)malloc(k * sizeof(int));
+    int *nPoints = (int *)calloc(k, sizeof(int));
     assert(nPoints != NULL);
 
-    double **sum = (double **)malloc(k * sizeof(double *));
+    double **sum = (double **)calloc(k, sizeof(double *));
     assert(sum != NULL);
 
-
     for (int i = 0; i < k; ++i) {
-	    sum[i] = (double *)malloc(points_dimensions * sizeof(double));
+	    sum[i] = (double *)calloc(points_dimensions, sizeof(double));
         assert(sum[i] != NULL);
 	}
-        
-    for (int t = 0; t<epochs; t++) {
+    
+    int iter = 0;
+    int cluster_num;
+    while (boolean && iter < epochs) {
         double distance;
 
-        // Initialise with zeroes
-        #pragma omp parallel for schedule(static)
-        for (int j = 0; j < k; ++j) {
-            nPoints[j] = 0;
-            for (int i = 0; i< points_dimensions; i++) {
-                sum[j][i] = 0.0;
-            }    
-        }
-
         // Updating the distance of each point with respect to the current centroids
-        #pragma omp parallel for private(distance, cluster_num) schedule(dynamic,10)
+        #pragma omp parallel for default(none) shared(points, sum, nPoints) private(distance, cluster_num) firstprivate(n, k, points_dimensions, centroids) schedule(static, 64)
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < k; ++j) {
                 distance = euclidian_distance(&centroids[j], &points[i]);
@@ -67,49 +60,37 @@ void k_means (point *points,
                     cluster_num = j; 
                 }
             }
-
-            points[i].min_distance = __DBL_MAX__;
-
-            // Iterate over points to append data to centroids
+            
             #pragma omp critical
             {
                 nPoints[cluster_num]++;
+
+                // Iterate over points to append data to centroids
                 for (int j = 0; j < points_dimensions; ++j) {
                     sum[cluster_num][j] += points[i].x[j];
                 }
+
+                points[i].min_distance = __DBL_MAX__;
             }
         }
-
-        bool = 1;
 
         // Compute new centroids
         double prov_sum;
         for (int i = 0; i < k; ++i) {
             int nP = nPoints[i];
+            nPoints[i] = 0;
 
             for (int j = 0; j < points_dimensions; j++) {
                 prov_sum = sum[i][j]/nP;
+                sum[i][j] = 0.0;
                 if (centroids[i].x[j] != prov_sum) {
-                    bool = 0;
+                    boolean = 0;
                     centroids[i].x[j] = prov_sum;
                 }    
             }
         }
 
-        if (bool) {
-            // Freeing points, sum and centroids
-            for (int i = 0; i < k; ++i) {
-                free(sum[i]);
-                delete_point(&centroids[i]);
-            }
-            free(sum);
-            free(centroids); 
-            free(nPoints); 
-            
-            return;
-        }
-
-        iter = t + 1;
+        iter++;
     }
     
     // Freeing points, sum and centroids

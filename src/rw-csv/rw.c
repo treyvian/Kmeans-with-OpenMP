@@ -1,12 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <error.h>
-#include <string.h>
-#include <assert.h>
-
 #include "rw.h"
 
 void read_csv (int row, int col, const char *filename, double **data) {

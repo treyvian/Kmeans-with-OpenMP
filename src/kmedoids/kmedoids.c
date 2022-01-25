@@ -13,8 +13,6 @@ void k_medoids (point *points,
     point *best_medoids = (point *)calloc(k, sizeof(point));
     assert(best_medoids != NULL);
 
-    omp_set_nested(1);
-
     int random, iter, boolean;
     int points_dimensions = points->dimensions;
 
@@ -44,11 +42,13 @@ void k_medoids (point *points,
 
     for (int i = 0; i<k; ++i){
         for (int j = 0; j<n; ++j){
-            if (!equals(&points[j], &medoids[i])) {           
+            if (!equals(&points[j], &medoids[i])) {  
+                         
                 new_total_cost = 0;
                 distance = 0;
                 copy_point(&medoids[i], &points[j]);
-                #pragma omp parallel for reduction(+:new_total_cost) private(distance) firstprivate(medoids) schedule(dynamic)
+
+                #pragma omp parallel for reduction(+:new_total_cost) private(distance) firstprivate(medoids) schedule(static,8)
                 for (int t = 0; t < n; ++t) {
                     for (int r = 0; r < k; ++r) {
                         distance = manhattan_distance(&medoids[r], &points[t]);
@@ -87,17 +87,14 @@ void k_medoids (point *points,
 
             #pragma omp critical
             {
-            if (distance < points[i].min_distance){
-                points[i].cluster = j;
-                points[i].min_distance = distance;
-            }
+                if (distance < points[i].min_distance){
+                    points[i].cluster = j;
+                    points[i].min_distance = distance;
+                }
             }
         }
 
-        #pragma omp critical
-        {
         points[i].min_distance = __DBL_MAX__;
-        }
     }
 
     for (int i = 0; i < k; ++i) {
