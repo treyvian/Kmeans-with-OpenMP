@@ -72,9 +72,8 @@ int main (int argc, char const *argv[]) {
     
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_means(data, data_size, max_iterations, i);
-        
         sil_score = silhouette_score(data, data_size, i);
-        printf("%f ",sil_score);
+        printf("%f ", sil_score);
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -87,13 +86,13 @@ int main (int argc, char const *argv[]) {
 
     // Starting the timer for kmeans
     tstart = omp_get_wtime();
-    k_means(data, data_size, max_iterations, 5);
-    printf("-%d- ", best_cluster);
+    k_means(data, data_size, max_iterations, best_cluster);
+    
     // Stopping the timer for kmeans
     elapsed = omp_get_wtime() - tstart;
     printf("Time kmeans %f ", elapsed);
 
-    // Starting the timer for silhouette score
+    // //Starting the timer for silhouette score
     tstart = omp_get_wtime();
     silhouette_score(data, data_size, best_cluster);
 
@@ -118,7 +117,7 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_medoids(data, data_size, i);
         sil_score = silhouette_score(data, data_size, i);
-    
+        
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -134,7 +133,6 @@ int main (int argc, char const *argv[]) {
     // Stopping the timer for kmedoids
     elapsed = omp_get_wtime() - tstart;
     printf("Time kmedoids %f ", elapsed);
-
     // Starting the timer for silhouette score
     tstart = omp_get_wtime();
     silhouette_score(data, data_size, best_cluster);

@@ -32,5 +32,5 @@ rw.o:
 
 clean:
 	rm out
-	rm *.o
+	rm $(OBJ_FILES)
 

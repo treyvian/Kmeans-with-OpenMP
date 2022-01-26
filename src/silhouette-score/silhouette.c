@@ -4,21 +4,26 @@ double silhouette_score (point *data, int n, int k) {
 
     assert(data != NULL);
 
-    double silhouette_score, Cohesion;
+    double silhouette_score = 0;
 
-    double mean_coh, mean_sep, sep, distance;
+    double mean_coh, mean_sep, sep, distance, Cohesion;
 
-    double *separation = (double *)calloc(k, sizeof(double));
-    int *n_clust = (int *)calloc(k, sizeof(int));
+    double separation[k];
+    int n_clust[k];
+    
+    for(int i=0; i < k; ++i) {
+        separation[i] = 0.0;
+        n_clust[i] = 0; 
+    }
 
     int cluster_number;
 
+    #pragma omp parallel for reduction(+:silhouette_score) private(mean_coh, mean_sep, sep, distance, Cohesion, cluster_number) firstprivate(n, k, separation, n_clust) schedule(static)
     for (int i=0; i < n; ++i) {
 
         Cohesion = 0;
         cluster_number = data[i].cluster;
 
-        #pragma omp parallel for reduction(+:Cohesion, separation[:k]) default(none) firstprivate(cluster_number, i, n, k, distance) shared(data, n_clust) schedule(static, 64)
         for (int j = 0; j < n; ++j) {
             if (i != j) {            
                 distance = euclidian_distance(&data[i], &data[j]);
@@ -26,12 +31,10 @@ double silhouette_score (point *data, int n, int k) {
                 
                 if (cluster_number == cluster_j) {
                     Cohesion += distance;
-                    #pragma omp atomic
                     n_clust[cluster_j]++;
                 
                 } else {
                     separation[cluster_j] += distance;
-                    #pragma omp atomic
                     n_clust[cluster_j]++;
                 }    
             }    
@@ -55,9 +58,6 @@ double silhouette_score (point *data, int n, int k) {
             silhouette_score += (mean_sep - mean_coh) / mean_sep;
         } else silhouette_score += (mean_sep - mean_coh) / mean_coh;
     }
-
-    free(separation);
-    free(n_clust);  
 
     return silhouette_score / n;
 }

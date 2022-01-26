@@ -32,27 +32,27 @@ void k_means (point *points,
         }
     }
     
-    int *nPoints = (int *)calloc(k, sizeof(int));
-    assert(nPoints != NULL);
+    int nPoints[k];
 
-    double **sum = (double **)calloc(k, sizeof(double *));
-    assert(sum != NULL);
-
+    double sum[k][points_dimensions];
+    
     for (int i = 0; i < k; ++i) {
-	    sum[i] = (double *)calloc(points_dimensions, sizeof(double));
-        assert(sum[i] != NULL);
+        nPoints[i] = 0;
+        for (int j = 0; j < points_dimensions; j++) {
+            sum[i][j] = 0.0;
+        }
 	}
     
-    int iter = 0;
-    int cluster_num;
-    while (boolean && iter < epochs) {
-        double distance;
-
+    boolean = 1;
+    #pragma omp parallel firstprivate(boolean)
+    for (int t = 0; boolean && t < epochs; t++) {
+           
         // Updating the distance of each point with respect to the current centroids
-        #pragma omp parallel for default(none) shared(points, sum, nPoints) private(distance, cluster_num) firstprivate(n, k, points_dimensions, centroids) schedule(static, 64)
+        #pragma omp for firstprivate(n, k, points_dimensions, centroids) schedule(static, 64)
         for (int i = 0; i < n; ++i) {
+            int cluster_num;
             for (int j = 0; j < k; ++j) {
-                distance = euclidian_distance(&centroids[j], &points[i]);
+                double distance = euclidian_distance(&centroids[j], &points[i]);
 
                 if (distance < points[i].min_distance){
                     points[i].min_distance = distance;
@@ -61,44 +61,40 @@ void k_means (point *points,
                 }
             }
             
-            #pragma omp critical
-            {
-                nPoints[cluster_num]++;
+            nPoints[cluster_num]++;
 
-                // Iterate over points to append data to centroids
-                for (int j = 0; j < points_dimensions; ++j) {
-                    sum[cluster_num][j] += points[i].x[j];
-                }
-
-                points[i].min_distance = __DBL_MAX__;
+            // Iterate over points to append data to centroids
+            for (int j = 0; j < points_dimensions; ++j) {
+                sum[cluster_num][j] += points[i].x[j];
             }
+
+            points[i].min_distance = __DBL_MAX__;
         }
 
+        boolean = 1;
         // Compute new centroids
-        double prov_sum;
+        #pragma omp for firstprivate(k, points_dimensions)
         for (int i = 0; i < k; ++i) {
             int nP = nPoints[i];
             nPoints[i] = 0;
 
             for (int j = 0; j < points_dimensions; j++) {
-                prov_sum = sum[i][j]/nP;
+                double prov_sum = sum[i][j]/nP;
                 sum[i][j] = 0.0;
                 if (centroids[i].x[j] != prov_sum) {
-                    boolean = 0;
-                    centroids[i].x[j] = prov_sum;
+                    #pragma omp critical
+                    {    
+                        boolean = 1;
+                        centroids[i].x[j] = prov_sum;
+                    }
                 }    
             }
         }
-
-        iter++;
     }
-    
+
     // Freeing points, sum and centroids
     for (int i = 0; i < k; ++i) {
-        free(sum[i]);
         delete_point(&centroids[i]);
     }
-    free(sum);
-    free(centroids); 
-    free(nPoints);  
+    free(centroids);
 }
