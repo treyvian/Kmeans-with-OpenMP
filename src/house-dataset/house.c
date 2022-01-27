@@ -10,8 +10,8 @@
 /*
 * My methods
 */
-#include "../k-means/kmeans.h"
-#include "../k-medoids/kmedoids.h"
+#include "../kmedoids/kmedoids.h"
+#include "../kmeans/kmeans.h"
 #include "../silhouette-score/silhouette.h"
 #include "../rw-csv/rw.h"
 
@@ -78,11 +78,12 @@ int main (int argc, char const *argv[]) {
 
     // Starting the timer for performance measurement 
     tstart = omp_get_wtime();
-    double sil_score = silhouette_score(data, data_size, 6);
+    
+    silhouette_score(data, data_size, 6);
 
     // Stopping the timer and print the result
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time silhouette %f\n", elapsed);
+    printf("silhouette %f\n", elapsed);
 
     // Header of the csv file in output
     char *header = "MedInc,Latitude,Longitude,Cluster\n";
@@ -96,29 +97,29 @@ int main (int argc, char const *argv[]) {
     /*
     * K-medoids
     */
-    // // Starting the timer for performance measurement
-    // tstart = omp_get_wtime();
+    // Starting the timer for performance measurement
+    tstart = omp_get_wtime();
 
-    // // Clustering the dataset
-    // k_medoids(data, data_size, 6);
+    // Clustering the dataset
+    k_medoids(data, data_size, 6);
 
-    // // Stopping the timer and print the result
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("Elapsed time kmedoids %f\n", elapsed);
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time kmedoids %f\n", elapsed);
 
-    // // Starting the timer for performance measurement 
-    // tstart = omp_get_wtime();
-    // sil_score = silhouette_score(data, data_size, 6);
+    // Starting the timer for performance measurement 
+    tstart = omp_get_wtime();
+    silhouette_score(data, data_size, 6);
 
-    // // Stopping the timer and print the result
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("Elapsed time silhouette %f\n", elapsed);
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("silhouette %f\n", elapsed);
 
-    // header = "MedInc,Latitude,Longitude,Cluster\n";
-    // filename = "output_housing_kmedoids.csv";
+    header = "MedInc,Latitude,Longitude,Cluster\n";
+    filename = "output_housing_kmedoids.csv";
     
-    // // Creating the file in output
-    // create_marks_csv(data, data_size, filename, header);
+    // Creating the file in output
+    create_marks_csv(data, data_size, filename, header);
 
     
     // Freeing memory for the array data

@@ -10,8 +10,8 @@
 /*
 * My methods
 */
-#include "../k-means/kmeans.h"
-#include "../k-medoids/kmedoids.h"
+#include "../kmedoids/kmedoids.h"
+#include "../kmeans/kmeans.h"
 #include "../silhouette-score/silhouette.h"
 #include "../rw-csv/rw.h"
 
@@ -72,9 +72,8 @@ int main (int argc, char const *argv[]) {
     
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_means(data, data_size, max_iterations, i);
-        
         sil_score = silhouette_score(data, data_size, i);
-        
+        printf("%f ", sil_score);
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -88,18 +87,18 @@ int main (int argc, char const *argv[]) {
     // Starting the timer for kmeans
     tstart = omp_get_wtime();
     k_means(data, data_size, max_iterations, best_cluster);
-
+    
     // Stopping the timer for kmeans
     elapsed = omp_get_wtime() - tstart;
     printf("Time kmeans %f ", elapsed);
 
-    // Starting the timer for silhouette score
+    // //Starting the timer for silhouette score
     tstart = omp_get_wtime();
     silhouette_score(data, data_size, best_cluster);
 
     // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("Time silhouette %f\n", elapsed);
+    printf("%f\n", elapsed);
 
 
     // Create output csv file for kmeans
@@ -118,6 +117,7 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_medoids(data, data_size, i);
         sil_score = silhouette_score(data, data_size, i);
+        
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -133,14 +133,13 @@ int main (int argc, char const *argv[]) {
     // Stopping the timer for kmedoids
     elapsed = omp_get_wtime() - tstart;
     printf("Time kmedoids %f ", elapsed);
-
     // Starting the timer for silhouette score
     tstart = omp_get_wtime();
     silhouette_score(data, data_size, best_cluster);
 
     // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("Time silhouette %f\n", elapsed);
+    printf("%f\n", elapsed);
 
     // Create output csv file for kmedoids
     const char *header_p = "X,Y,Cluster\n";

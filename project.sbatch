@@ -5,8 +5,7 @@
 #SBATCH --time=01:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --output=nomeoutput
+#SBATCH --output=outputlog
 #SBATCH --gres=gpu:1
 
-./launch_mall
 ./launch_house

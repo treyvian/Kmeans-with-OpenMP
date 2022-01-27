@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-
 #include "point.h"
 
 void point_init (point *p, double *x, int dimensions) {
@@ -21,7 +15,7 @@ double euclidian_distance (point *p1, point *p2) {
     assert(p1 != NULL && p2 != NULL);
 
     double distance = 0;
-
+    
     for (int i = 0; i < p1->dimensions; ++i) {
         distance += (p2->x[i] - p1->x[i]) * (p2->x[i] - p1->x[i]);
     }

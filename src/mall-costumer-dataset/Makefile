@@ -1,34 +1,36 @@
 POINT = ../point/
-KMEANS = ../k-means/
-KMEDOIDS = ../k-medoids/
+KMEDOIDS = ../kmedoids/
+KMEANS = ../kmeans/
 SILHOUETTE = ../silhouette-score/
 RW = ../rw-csv/
 
+OBJ_FILES = mall.o point.o kmeans.o kmedoids.o silhouette.o rw.o
+
 all: out
 
-out: mall.o $(POINT)point.o $(KMEANS)kmeans.o $(KMEDOIDS)kmedoids.o $(SILHOUETTE)silhouette.o $(RW)rw.o
-	gcc -fopenmp -o out mall.o $(POINT)point.o $(KMEANS)kmeans.o $(KMEDOIDS)kmedoids.o $(SILHOUETTE)silhouette.o $(RW)rw.o -lm
+out: $(OBJ_FILES)
+	gcc -o out $(OBJ_FILES) -lm -fopenmp
 
-mall.o: mall.c
-	gcc -c mall.c
+mall.o:
+	gcc -c mall.c -fopenmp -o mall.o
 
 point.o: 
-	make -C $(POINT)
+	gcc -c $(POINT)point.c -o ./point.o
 
 kmeans.o: 
-	make -C $(KMEANS)
+	gcc -c $(KMEANS)kmeans.c -fopenmp -o ./kmeans.o
 
 kmedoids.o: 
-	make -C $(KMEDOIDS)
+	gcc -c $(KMEDOIDS)kmedoids.c -fopenmp -o ./kmedoids.o
 
 silhouette.o: 
-	make -C $(SILHOUETTE)
+	gcc -c $(SILHOUETTE)silhouette.c -fopenmp -o ./silhouette.o
 
 rw.o: 
-	make -C $(RW)
+	gcc -c $(RW)rw.c -o rw.o
 
 
 clean:
 	rm out
-	rm mall.o
+	rm $(OBJ_FILES)
 
