@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "assert.h": "c",
-        "time.h": "c",
-        "array": "c",
-        "string": "c",
-        "string_view": "c"
-    }
-}

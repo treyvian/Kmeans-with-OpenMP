@@ -12,6 +12,7 @@
 /*
 * Struct that represent a point in the dataset
 */
+#pragma pack(1)
 typedef struct point {
     double *x; /**< coordinates of the point */
     int dimensions; /**< dimensions of the point  */

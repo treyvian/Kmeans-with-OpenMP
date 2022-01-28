@@ -45,7 +45,7 @@ void k_medoids (point *points,
                 double new_total_cost = 0;
                 copy_point(&medoids[i], &points[j]);
 
-                #pragma omp parallel for reduction(+:new_total_cost) firstprivate(medoids) schedule(static,64)
+                #pragma omp parallel for reduction(+:new_total_cost) firstprivate(medoids) schedule(static)
                 for (int t = 0; t < n; ++t) {
                     for (int r = 0; r < k; ++r) {
                         double distance = manhattan_distance(&medoids[r], &points[t]);

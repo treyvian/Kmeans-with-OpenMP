@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 #include <time.h>
 #include <string.h>
 #include <assert.h>
@@ -35,7 +36,7 @@ int main (int argc, char const *argv[]) {
 	read_csv(row, col, fname, dat); 
 
     // Bi-dimensional array for storing the the data to work with
-    point *data = (point *)malloc((row - 1) * sizeof(point));
+    point *data = (point *)memalign(sizeof(point), (row - 1) * sizeof(point));
     assert(data != NULL);
 
     double *supp_vector;
@@ -43,7 +44,7 @@ int main (int argc, char const *argv[]) {
 
     // Initialize the data array with one point for each row
     for (int i = 1; i < row; ++i) {
-        supp_vector = (double *)malloc(dimensions * sizeof(double)); 
+        supp_vector = (double *)memalign(sizeof(double), dimensions * sizeof(double)); 
         assert(supp_vector != NULL);
 
         supp_vector[0] = (double) dat[i][3];
