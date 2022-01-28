@@ -1,6 +1,5 @@
 #include "kmeans.h"
 
-#define MAX_DIST __DBL_MAX__
 
 void k_means (point *points, 
                 const int n, 
@@ -50,38 +49,38 @@ void k_means (point *points,
         }
 	}
     
-    
     boolean = 1;
+    double p_distance, distance;
+    int cluster_num;
     for (int t = 0; boolean && t < epochs; t++) {
-           
-        // Updating the distance of each point with respect to the current centroids
-        #pragma omp parallel for firstprivate(n, k, centroids) schedule(static)
-        for (int i = 0; i < n; ++i) {
-            int cluster_num;
-            for (int j = 0; j < k; ++j) {
-                double distance = euclidian_distance(&centroids[j], &points[i]);
 
-                if (distance < points[i].min_distance){
-                    points[i].min_distance = distance;
-                    points[i].cluster = j;
+        // Updating the distance of each point with respect to the current centroids
+        #pragma omp parallel for private(p_distance, distance, cluster_num) firstprivate(n, k, centroids, points_dimensions)
+        for (int i = 0; i < n; ++i) {
+            p_distance = __DBL_MAX__;
+            cluster_num;
+
+            for (int j = 0; j < k; ++j) {
+                distance = euclidian_distance(&centroids[j], &points[i]);
+                if (distance < p_distance){
+                    p_distance = distance;
                     cluster_num = j; 
                 }
             }
             
+            points[i].cluster = cluster_num;
             n_points[cluster_num]++;
 
             // Iterate over points to append data to centroids
             for (int j = 0; j < points_dimensions; ++j) {
                 sum[cluster_num][j] += points[i].x[j];
             }
-
-            points[i].min_distance = MAX_DIST;
         }
-
+                
         boolean = 1;
     
         // Compute new centroids
-        #pragma omp parallel for firstprivate(k, points_dimensions) schedule(static)
+        #pragma omp parallel for firstprivate(k, points_dimensions)
         for (int i = 0; i < k; ++i) {
             int n_p = n_points[i];
             n_points[i] = 0;
@@ -99,6 +98,7 @@ void k_means (point *points,
             }
         }
     }
+
     
     //Freeing points, sum and centroids
     for (int i = 0; i < k; ++i) {

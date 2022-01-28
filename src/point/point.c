@@ -7,10 +7,9 @@ void point_init (point *p, double *x, int dimensions) {
     p->x = x;
     p->dimensions = dimensions;
     p->cluster = -1;
-    p->min_distance = __DBL_MAX__;
 }
 
-double euclidian_distance (point *p1, point *p2) {
+double euclidian_distance (const point *p1, const point *p2) {
 
     assert(p1 != NULL && p2 != NULL);
 
@@ -23,7 +22,7 @@ double euclidian_distance (point *p1, point *p2) {
     return sqrt(distance);
 }
 
-double manhattan_distance (point *p1, point *p2) {
+double manhattan_distance (const point *p1, const point *p2) {
     assert(p1 != NULL || p2 != NULL);
 
     double distance = 0;
@@ -39,7 +38,7 @@ void copy_point (point *dst, const point *src) {
     assert(src != NULL && dst != NULL);
 
     if (dst->x == NULL) {
-        dst->x = calloc(src->dimensions, sizeof(double));
+        dst->x = memalign(sizeof(double), src->dimensions * sizeof(double));
     }
 
     for (int i = 0; i < src->dimensions; ++i) {
@@ -47,7 +46,6 @@ void copy_point (point *dst, const point *src) {
     }
     dst->dimensions = src->dimensions;
     dst->cluster = src->cluster;
-    dst->min_distance = src->min_distance;
 }
 
 
@@ -55,7 +53,6 @@ void reset_point (point *p) {
     assert(p != NULL);
 
     p->cluster = -1;
-    p->min_distance = __DBL_MAX__;
 }
 
 

@@ -66,7 +66,7 @@ int main (int argc, char const *argv[]) {
     /*
     * K-means
     */
-    int max_iterations = 500;
+    const int max_iterations = 500;
     double tstart, elapsed;
 
     // Starting the timer for performance measurement

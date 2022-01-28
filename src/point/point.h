@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 #include <math.h>
 #include <string.h>
 #include <assert.h>
@@ -12,12 +13,10 @@
 /*
 * Struct that represent a point in the dataset
 */
-#pragma pack(1)
 typedef struct point {
+    size_t dimensions; /**< dimensions of the point  */
     double *x; /**< coordinates of the point */
-    int dimensions; /**< dimensions of the point  */
-    int cluster; /**< cluster number assigned */
-    double min_distance; /**< distance from the closest centeroid/metroids */
+    size_t cluster; /**< cluster number assigned */
 } point;
 
 /*
@@ -36,7 +35,7 @@ void point_init (point *p, double *x, int dimensions);
 * @param p2 second point to take in consideration
 * @return the distance between p1 and p2
 */
-double euclidian_distance (point *p1, point *p2);
+double euclidian_distance (const point *p1, const point *p2);
 
 /*
 * Calculate the manhattan distance between 2 points
@@ -45,7 +44,7 @@ double euclidian_distance (point *p1, point *p2);
 * @param p2 second point to take in consideration
 * @return the distance between p1 and p2
 */
-double manhattan_distance (point *p1, point *p2);
+double manhattan_distance (const point *p1, const point *p2);
 
 /*
 * Copy a point to another
