@@ -1,58 +1,47 @@
 #include "kmedoids.h"
 
-
-void k_medoids (point *points, 
-                        const int n, 
-                        const int k) {
+void k_medoids (double **points,
+                int *clusters,
+                const int n, 
+                const int dimensions,
+                const int k) {
 
     assert(points != NULL);
+    assert(clusters != NULL);
 
-    point *medoids = (point *)calloc(k, sizeof(point));
+    double **medoids = (double **)calloc(k, sizeof(double *));
     assert(medoids != NULL);
 
-    point *best_medoids = (point *)calloc(k, sizeof(point));
+    double **best_medoids = (double **)calloc(k, sizeof(double*));
     assert(best_medoids != NULL);
 
-    int random, iter, boolean;
-    int points_dimensions = points->dimensions;
-
-    srand(time(0));
     for (int i = 0; i < k; i++) {
-        boolean = 1;
-        random = rand() % n;
-        for (int j = 0; j < i; j++) {
-            if (equals(&points[random], &medoids[j])) {
-                boolean = 0;
-                i--;
-                break;
-            }    
-        }
-        if (boolean) {
-            copy_point(&medoids[i], &points[random]);
-        }
+        medoids[i] = (double *)calloc(dimensions, sizeof(double));
+        assert(medoids[i]);
+        best_medoids[i] = (double *)calloc(dimensions, sizeof(double));
+        assert(best_medoids[i]);
+        
+        medoids[i] = points[i];
+        best_medoids[i] = medoids[i];
     }
 
     double total_cost = __DBL_MAX__;
 
-    for (int i=0; i<k; ++i) {
-        copy_point(&best_medoids[i], &medoids[i]);
-    }
-    
-    double distance, p_distance;
-    int clust_num;
-    for (int i = 0; i<k; ++i){
-        for (int j = 0; j<n; ++j){
-            if (!equals(&points[j], &medoids[i])) {  
-                         
-                double new_total_cost = 0;
-                copy_point(&medoids[i], &points[j]);
+    double distance, p_distance, new_total_cost;
+    #pragma omp parallel for collapse(2) private(distance, p_distance, new_total_cost) firstprivate(total_cost, k, n, dimensions, medoids)
+    for (int i = 0; i<n; ++i){
+        for (int j = 0; j<k; ++j){
+            if (points[i] != medoids[j]) {  
+                    
+                new_total_cost = 0;
+                medoids[j] = points[i];
 
-                #pragma omp parallel for reduction(+:new_total_cost) private(distance, p_distance) firstprivate(medoids)
                 for (int t = 0; t < n; ++t) {
                     p_distance = __DBL_MAX__;
                     for (int r = 0; r < k; ++r) {
-                        distance = manhattan_distance(&medoids[r], &points[t]);
 
+                        distance = manhattan_distance(medoids[r], points[t], dimensions);
+                    
                         if (p_distance > distance) {
                             p_distance = distance;
                         }
@@ -61,35 +50,36 @@ void k_medoids (point *points,
                     new_total_cost += p_distance;
                 }
                 
-                if (total_cost > new_total_cost) {
-                    total_cost = new_total_cost;
-                    copy_point(&best_medoids[i], &points[j]);
-                } else {
-                    copy_point(&medoids[i], &best_medoids[i]);
-                }    
-            }                      
+                #pragma omp critical
+                {
+                    if (total_cost > new_total_cost) {
+                        total_cost = new_total_cost;
+                        best_medoids[j] = points[i];
+                    } else {
+                        medoids[j] = best_medoids[j];
+                    } 
+                }   
+            }                    
         }
-        copy_point(&medoids[i], &best_medoids[i]);
     }
 
-    #pragma omp parallel for private(distance, p_distance, clust_num)
+    int clust_num;
+
+    #pragma omp parallel for private(distance, p_distance, clust_num) schedule(static)
     for (int i = 0; i < n; ++i) {
         p_distance = __DBL_MAX__;
         for (int j = 0; j < k; ++j) {
-            distance = manhattan_distance(&best_medoids[j], &points[i]);
+            distance = manhattan_distance(best_medoids[j], points[i], dimensions);
 
             if (distance < p_distance){
                 p_distance = distance;
                 clust_num = j;
             }
         }
-        points[i].cluster = clust_num;
+        
+        clusters[i] = clust_num;
     }
 
-    for (int i = 0; i < k; ++i) {
-        delete_point(&best_medoids[i]);
-        delete_point(&medoids[i]);
-    }
     free(best_medoids);
     free(medoids);
 }

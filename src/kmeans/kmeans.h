@@ -9,11 +9,13 @@
 #include <assert.h>
 #include <omp.h>
 
-#include "../point/point.h"
+#include "../silhouette-score/silhouette.h"
 
-void k_means (point *, 
-                const int, 
-                const int, 
-                const int);
+void k_means (double **points,
+                int *clusters,
+                const int n,
+                const int dimensions, 
+                const int epochs,
+                const int k);
 
 #endif

@@ -25,7 +25,7 @@ void read_csv (int row, int col, const char *filename, double **data) {
     fclose(file);
 }
 
-void create_marks_csv(point *points, int n, const char *name, const char *header){
+void create_marks_csv(double **points, int *clusters, int n, int dimensions, const char *name, const char *header){
     
     FILE *fp;
 
@@ -37,10 +37,10 @@ void create_marks_csv(point *points, int n, const char *name, const char *header
     fprintf(fp, header); 
 
     for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < points->dimensions; ++j) {
-            fprintf(fp,"%.3f,", points[i].x[j]);
+        for (int j = 0; j < dimensions; ++j) {
+            fprintf(fp,"%.3f,", points[i][j]);
         }
-        fprintf(fp,"%d\n", points[i].cluster);
+        fprintf(fp,"%d\n", clusters[i]);
     }   
     
     fclose(fp);

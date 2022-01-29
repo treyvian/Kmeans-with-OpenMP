@@ -27,53 +27,45 @@ int main (int argc, char const *argv[]) {
 	char fname[256];	
     strcpy(fname, argv[3]);
 
-    // Support array for storing the data from the csv file
-    double **dat;
-	dat = (double **)memalign(sizeof(double *), row * sizeof(double *));
-	for (int i = 0; i < row; ++i){
-		dat[i] = (double *)memalign(sizeof(double), col * sizeof(double));
-	}
-
-    // Reading the csv file
-	read_csv(row, col, fname, dat);
-
-    // Bi-dimensional array for storing the the data to work with
-    point *data = (point *)memalign(sizeof(point), (row - 1) * sizeof(point));
-    assert(data != NULL);
-
-    double *supp_vector;
     int dimensions = 3;
 
-    // Initialize the data array with one point for each row
-    for (int i = 1; i < row; ++i) {
-        supp_vector = (double *)memalign(sizeof(double) ,dimensions * sizeof(double)); 
-        assert(supp_vector != NULL);
+    // Support array for storing the data from the csv file
+    double **supp_array = (double **)malloc(row * sizeof(double *));
+	for (int i = 0; i < row; ++i){
+		supp_array[i] = (double *)malloc(col * sizeof(double));
+	}
 
-        supp_vector[0] = (double) dat[i][0];
-        supp_vector[1] = (double) dat[i][6];
-        supp_vector[2] = (double) dat[i][7];
-        point_init(&data[i-1], supp_vector, dimensions);
-    }
+    double **data = (double **)memalign(sizeof(double *), (row - 1) * sizeof(double *));
+    assert(data != NULL);
 
-    // Freeing support array dat
-    for (int i=0; i < row; i++) {
-        free(dat[i]);
-    }
-    free(dat);
+    // Reading the csv file
+	read_csv(row, col, fname, supp_array);
 
-    const size_t data_size = row-1;
+   for (int i = 1; i < row; ++i) {
+        data[i-1] = (double *)calloc(dimensions, sizeof(double));
+        assert(data[i-1] != NULL);
+
+        data[i-1][0] = (double) supp_array[i][0];
+        data[i-1][1] = (double) supp_array[i][6];
+        data[i-1][2] = (double) supp_array[i][7];
+    } 
+
+    int *clusters = (int *)calloc((row - 1),  sizeof(int));
+    assert(clusters != NULL);
+
+    const int data_size = row-1;
 
     /*
     * K-means
     */
-    const int max_iterations = 500;
+    int max_iterations = 500;
     double tstart, elapsed;
 
     // Starting the timer for performance measurement
     tstart = omp_get_wtime();
     
     // Clustering the dataset
-    k_means(data, data_size, max_iterations, 6);
+    k_means(data, clusters, data_size, dimensions, max_iterations, 6);
     
     // Stopping the timer and print the result
     elapsed = omp_get_wtime() - tstart;
@@ -82,7 +74,7 @@ int main (int argc, char const *argv[]) {
     // Starting the timer for performance measurement 
     tstart = omp_get_wtime();
     
-    silhouette_score(data, data_size, 6);
+    silhouette_score(data, clusters, data_size, dimensions, 6);
 
     // Stopping the timer and print the result
     elapsed = omp_get_wtime() - tstart;
@@ -95,41 +87,42 @@ int main (int argc, char const *argv[]) {
     char *filename = "output_house_kmeans.csv";
 
     // Creating the file in output
-    create_marks_csv(data, data_size, filename, header);    
+    create_marks_csv(data, clusters, data_size, dimensions, filename, header);    
 
     /*
     * K-medoids
     */
-    // Starting the timer for performance measurement
-    // tstart = omp_get_wtime();
+    //Starting the timer for performance measurement
+    tstart = omp_get_wtime();
 
-    // //Clustering the dataset
-    // k_medoids(data, data_size, 6);
+    //Clustering the dataset
+    k_medoids(data, clusters, data_size, dimensions, 6);
 
-    // // Stopping the timer and print the result
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("Elapsed time kmedoids %f, ", elapsed);
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("Elapsed time kmedoids %f, ", elapsed);
 
-    // // Starting the timer for performance measurement 
-    // tstart = omp_get_wtime();
-    // silhouette_score(data, data_size, 6);
+    // Starting the timer for performance measurement 
+    tstart = omp_get_wtime();
+    silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // // Stopping the timer and print the result
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("silhouette %f\n", elapsed);
+    // Stopping the timer and print the result
+    elapsed = omp_get_wtime() - tstart;
+    printf("silhouette %f\n", elapsed);
 
-    // header = "MedInc,Latitude,Longitude,Cluster\n";
-    // filename = "output_housing_kmedoids.csv";
+    header = "MedInc,Latitude,Longitude,Cluster\n";
+    filename = "output_housing_kmedoids.csv";
     
-    // // Creating the file in output
-    // create_marks_csv(data, data_size, filename, header);
+    // Creating the file in output
+    create_marks_csv(data, clusters, data_size, dimensions, filename, header);
 
     
     // Freeing memory for the array data
-    for (int i = 0; i < data_size; ++i) {
-        delete_point(&data[i]);
+    for (int i=0; i < row; i++) {
+        free(supp_array[i]);
     }
+    free(supp_array);
     free(data);
-
+    
     return 0;
 }

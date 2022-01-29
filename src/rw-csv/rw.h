@@ -11,8 +11,6 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../point/point.h"
-
 /*
 * Read a filename.csv and saves the data extracted in to the * data array
 *
@@ -31,6 +29,6 @@ void read_csv (int row, int col, const char *filename, double **data);
 * @param name name to give to the file in ouput
 * @param header header of the csv file
 */
-void create_marks_csv(point *points, int n, const char *name, const char *header);
+void create_marks_csv(double **points, int *clusters, int n, int dimensions, const char *name, const char *header);
 
 #endif

@@ -1,8 +1,33 @@
 #include "silhouette.h"
 
-double silhouette_score (point *data, int n, int k) {
+double euclidian_distance (const double *p1, const double *p2, int dimensions) {
+
+    assert(p1 != NULL && p2 != NULL);
+
+    double distance = 0;
+
+    for (int i = 0; i < dimensions; ++i) {
+        distance += pow((p2[i] - p1[i]),2);
+    }
+    
+    return sqrt(distance);
+}
+
+double manhattan_distance (const double *p1, const double *p2, int dimensions) {
+
+    double distance = 0;
+
+    for (int i = 0; i < dimensions; ++i) {
+        distance += abs(p2[i] - p1[i]);
+    } 
+
+    return distance;
+}
+
+double silhouette_score (double **data, int *clusters, int n, int dimensions,int k) {
 
     assert(data != NULL);
+    assert(clusters != NULL);
 
     double silhouette_score = 0;
 
@@ -16,35 +41,31 @@ double silhouette_score (point *data, int n, int k) {
         n_clust[i] = 0; 
     }
 
-    int cluster_number;
-
-    #pragma omp parallel for reduction(+:silhouette_score) private(mean_coh, mean_sep, sep, distance, Cohesion, cluster_number) firstprivate(n, k, separation, n_clust) schedule(static)
+    #pragma omp parallel for reduction(+:silhouette_score) private(mean_coh, mean_sep, sep, distance, Cohesion) firstprivate(n, k, separation, n_clust, dimensions) schedule(static)
     for (int i=0; i < n; ++i) {
 
         Cohesion = 0;
-        cluster_number = data[i].cluster;
 
         for (int j = 0; j < n; ++j) {
             if (i != j) {            
-                distance = euclidian_distance(&data[i], &data[j]);
-                int cluster_j = data[j].cluster;
+                distance = euclidian_distance(data[i], data[j], dimensions);
                 
-                if (cluster_number == cluster_j) {
+                if (clusters[i] == clusters[j]) {
                     Cohesion += distance;
-                    n_clust[cluster_j]++;
+                    n_clust[clusters[j]]++;
                 
                 } else {
-                    separation[cluster_j] += distance;
-                    n_clust[cluster_j]++;
+                    separation[clusters[j]] += distance;
+                    n_clust[clusters[j]]++;
                 }    
             }    
         }
 
-        mean_coh = Cohesion / n_clust[cluster_number];
+        mean_coh = Cohesion / n_clust[clusters[i]];
         mean_sep = __DBL_MAX__;
 
         for (int j = 0; j < k; ++j) {
-            if (j != cluster_number) {
+            if (j != clusters[i]) {
                 sep = separation[j] / n_clust[j];
                 if (mean_sep > sep){
                     mean_sep = sep;

@@ -8,10 +8,12 @@
 #include <assert.h>
 #include <omp.h>
 
-#include "../point/point.h"
+#include "../silhouette-score/silhouette.h"
 
-void k_medoids (point *, 
-                        const int,  
-                        const int);
+void k_medoids (double **points,
+                int *clusters,
+                const int n,
+                const int dimensions,  
+                const int);
 
 #endif
