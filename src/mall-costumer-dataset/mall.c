@@ -66,6 +66,7 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_means(data, clusters, data_size, dimensions, max_iterations, i);
         sil_score = silhouette_score(data, clusters, data_size, dimensions, i);
+        
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;

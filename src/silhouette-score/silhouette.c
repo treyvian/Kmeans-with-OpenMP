@@ -2,11 +2,10 @@
 
 double euclidian_distance (const double *p1, const double *p2, int dimensions) {
 
-    assert(p1 != NULL && p2 != NULL);
-
     double distance = 0;
 
-    for (int i = 0; i < dimensions; ++i) {
+    int i;
+    for (i = 0; i < dimensions; ++i) {
         distance += pow((p2[i] - p1[i]),2);
     }
     
@@ -17,7 +16,8 @@ double manhattan_distance (const double *p1, const double *p2, int dimensions) {
 
     double distance = 0;
 
-    for (int i = 0; i < dimensions; ++i) {
+    int i;
+    for (i = 0; i < dimensions; ++i) {
         distance += abs(p2[i] - p1[i]);
     } 
 
