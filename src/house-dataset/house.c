@@ -35,22 +35,22 @@ int main (int argc, char const *argv[]) {
 		supp_array[i] = (double *)malloc(col * sizeof(double));
 	}
 
-    double **data = (double **)memalign(sizeof(double *), (row - 1) * sizeof(double *));
+    double **data = (double **)malloc((row - 1) * sizeof(double *));
     assert(data != NULL);
 
     // Reading the csv file
 	read_csv(row, col, fname, supp_array);
 
-   for (int i = 1; i < row; ++i) {
-        data[i-1] = (double *)calloc(dimensions, sizeof(double));
+    for (int i = 1; i < row; ++i) {
+        data[i-1] = (double *)malloc(dimensions * sizeof(double));
         assert(data[i-1] != NULL);
 
         data[i-1][0] = (double) supp_array[i][0];
-        data[i-1][1] = (double) supp_array[i][6];
-        data[i-1][2] = (double) supp_array[i][7];
+        data[i-1][1] = (double) supp_array[i][1];
+        data[i-1][2] = (double) supp_array[i][2];
     } 
 
-    int *clusters = (int *)calloc((row - 1),  sizeof(int));
+    int *clusters = (int *)malloc((row - 1) * sizeof(int));
     assert(clusters != NULL);
 
     const int data_size = row-1;
@@ -61,24 +61,21 @@ int main (int argc, char const *argv[]) {
     int max_iterations = 500;
     double tstart, elapsed;
 
-    // Starting the timer for performance measurement
+    // Starting the timer for kmeans
     tstart = omp_get_wtime();
-    
-    // Clustering the dataset
     k_means(data, clusters, data_size, dimensions, max_iterations, 6);
     
-    // Stopping the timer and print the result
+    // Stopping the timer for kmeans
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time k-means method: %f, ", elapsed);
+    printf("Time kmeans %f ", elapsed);
 
-    // Starting the timer for performance measurement 
+    // //Starting the timer for silhouette score
     tstart = omp_get_wtime();
-    
     silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer and print the result
+    // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("silhouette %f\n", elapsed);
+    printf("%f\n", elapsed);
 
     // Header of the csv file in output
     char *header = "MedInc,Latitude,Longitude,Cluster\n";
@@ -92,23 +89,21 @@ int main (int argc, char const *argv[]) {
     /*
     * K-medoids
     */
-    //Starting the timer for performance measurement
+    // Starting the timer for kmedoids
     tstart = omp_get_wtime();
-
-    //Clustering the dataset
     k_medoids(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer and print the result
+    // Stopping the timer for kmedoids
     elapsed = omp_get_wtime() - tstart;
-    printf("Elapsed time kmedoids %f, ", elapsed);
-
-    // Starting the timer for performance measurement 
+    printf("Time kmedoids %f ", elapsed);
+    // Starting the timer for silhouette score
     tstart = omp_get_wtime();
-    silhouette_score(data, clusters, data_size, dimensions, 6);
+    double sil = silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer and print the result
+    // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("silhouette %f\n", elapsed);
+    printf(" %f ", sil);
+    printf("%f\n", elapsed);
 
     header = "MedInc,Latitude,Longitude,Cluster\n";
     filename = "output_housing_kmedoids.csv";
@@ -123,6 +118,7 @@ int main (int argc, char const *argv[]) {
     }
     free(supp_array);
     free(data);
+    free(clusters);
     
     return 0;
 }

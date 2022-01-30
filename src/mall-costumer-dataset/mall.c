@@ -16,6 +16,7 @@
 #include "../silhouette-score/silhouette.h"
 #include "../rw-csv/rw.h"
 
+
 int main (int argc, char const *argv[]) {
     
     assert(argc >= 3);
@@ -33,21 +34,21 @@ int main (int argc, char const *argv[]) {
 		supp_array[i] = (double *)malloc(col * sizeof(double));
 	}
 
-    double **data = (double **)calloc((row - 1), sizeof(double *));
+    double **data = (double **)malloc((row - 1) * sizeof(double *));
     assert(data != NULL);
 
     // Reading the csv file
 	read_csv(row, col, fname, supp_array);
 
     for (int i = 1; i < row; ++i) {
-        data[i-1] = (double *)calloc(dimensions, sizeof(double));
+        data[i-1] = (double *)malloc(dimensions * sizeof(double));
         assert(data[i-1] != NULL);
 
         data[i-1][0] = (double) supp_array[i][3];
         data[i-1][1] = (double) supp_array[i][4];
     } 
 
-    int *clusters = (int *)calloc((row - 1), sizeof(int));
+    int *clusters = (int *)malloc((row - 1) * sizeof(int));
     assert(clusters != NULL);
 
     const int data_size = row-1;
@@ -110,7 +111,6 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_medoids(data, clusters, data_size, dimensions, i);
         sil_score = silhouette_score(data, clusters, data_size, dimensions, i);
-        printf(" %.3f ", sil_score);
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -148,7 +148,7 @@ int main (int argc, char const *argv[]) {
     }
     free(supp_array);
     free(data);
-    // free(clusters);
+    free(clusters);
 
     return 0;
 }

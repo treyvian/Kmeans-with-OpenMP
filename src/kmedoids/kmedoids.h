@@ -6,9 +6,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 #include <omp.h>
-
-#include "../silhouette-score/silhouette.h"
 
 void k_medoids (double **points,
                 int *clusters,

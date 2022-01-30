@@ -4,25 +4,14 @@ double euclidian_distance (const double *p1, const double *p2, int dimensions) {
 
     double distance = 0;
 
-    int i;
-    for (i = 0; i < dimensions; ++i) {
+
+    for (int i = 0; i < dimensions; ++i) {
         distance += pow((p2[i] - p1[i]),2);
     }
     
     return sqrt(distance);
 }
 
-double manhattan_distance (const double *p1, const double *p2, int dimensions) {
-
-    double distance = 0;
-
-    int i;
-    for (i = 0; i < dimensions; ++i) {
-        distance += abs(p2[i] - p1[i]);
-    } 
-
-    return distance;
-}
 
 double silhouette_score (double **data, int *clusters, int n, int dimensions,int k) {
 
@@ -47,7 +36,7 @@ double silhouette_score (double **data, int *clusters, int n, int dimensions,int
         Cohesion = 0;
 
         for (int j = 0; j < n; ++j) {
-            if (i != j) {            
+            if (i != j) {           
                 distance = euclidian_distance(data[i], data[j], dimensions);
                 
                 if (clusters[i] == clusters[j]) {
@@ -74,6 +63,7 @@ double silhouette_score (double **data, int *clusters, int n, int dimensions,int
             separation[j] = 0.0;
             n_clust[j] = 0;   
         }
+
 
         if (sep > mean_coh) {
             silhouette_score += (mean_sep - mean_coh) / mean_sep;

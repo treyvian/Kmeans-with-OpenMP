@@ -6,10 +6,10 @@
 #include <time.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <math.h>
 #include <assert.h>
 #include <omp.h>
 
-#include "../silhouette-score/silhouette.h"
 
 void k_means (double **points,
                 int *clusters,

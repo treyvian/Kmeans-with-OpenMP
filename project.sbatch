@@ -8,4 +8,5 @@
 #SBATCH --output=outputlog
 #SBATCH --gres=gpu:1
 
+./launch_mall
 ./launch_house

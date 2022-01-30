@@ -1,5 +1,19 @@
 #include "kmeans.h"
 
+int point_dimension;
+
+double euclidian_dist (const double *p1, const double *p2) {
+
+    double distance = 0;
+
+    for (int i = 0; i < point_dimension; ++i) {
+        distance += pow((p2[i] - p1[i]),2);
+    }
+    
+    return sqrt(distance);
+}
+
+
 void k_means (double **points, 
                 int *clusters,
                 const int n, 
@@ -11,24 +25,21 @@ void k_means (double **points,
     assert(clusters != NULL);
     assert(epochs > 0);
 
-    double **centroids = (double **)calloc(k, sizeof(double *));
-    assert(centroids != NULL);
+    point_dimension = dimensions;
 
-    int *n_points = (int *)calloc(k, sizeof(int));
-    assert(n_points != NULL);
+    double centroids[k][point_dimension];
 
-    double **sum = (double **)calloc(k, sizeof(double *));
-    assert(sum != NULL);
+    int n_points[k];
+
+    double sum[k][dimensions];
 
 
     for (int i = 0; i < k; i++) {
-        centroids[i] = (double *)calloc(dimensions, sizeof(double));
-        assert(centroids[i]);
-        
-        centroids[i] = points[i];
-
-        sum[i] = (double *)calloc(dimensions, sizeof(double));
-        assert(sum[i] != NULL);        
+        n_points[i] = 0;
+        for (int j = 0; j < point_dimension; j++){
+            centroids[i][j] = points[i][j];
+            sum[i][j] = 0.0;
+        }
     }
 
     
@@ -47,7 +58,7 @@ void k_means (double **points,
 
             
             for (int j = 0; j < k; ++j) {
-                distance = euclidian_distance(centroids[j], points[i], dimensions);
+                distance = euclidian_dist(centroids[j], points[i]);
                 if (distance < p_distance){
                     p_distance = distance;
                     cluster_num = j; 
@@ -63,7 +74,6 @@ void k_means (double **points,
             for (int j = 0; j < dimensions; ++j) {
                 sum[cluster_num][j] += points[i][j];
             }
-            
         }
                 
         boolean = 1;
@@ -84,13 +94,4 @@ void k_means (double **points,
             }
         }
     }
-
-    
-    //Freeing points, sum and centroids
-    for (int i = 0; i < k; ++i) {
-        free(sum[i]);
-    }
-    free(n_points);
-    free(sum);
-    free(centroids);
 }
