@@ -1,9 +1,12 @@
 #include "kmeans.h"
 
-int point_dimension;
+int point_dimension; /* static variable to be used in help methods */
 
+/*
+* Help method to calculate the euclidian distance
+*/
 double euclidian_dist (const double *p1, const double *p2) {
-
+    
     double distance = 0;
 
     for (int i = 0; i < point_dimension; ++i) {
@@ -20,7 +23,15 @@ void k_means (double **points,
                 const int dimensions,
                 const int epochs, 
                 const int k) {
-    
+
+    // 6 arguments
+    // points     - n x dimensions size array of dimensions: n x dimensions, containing the data in input
+    // clusters   - n-dimensional array of dimension n which at the end of the algorithm will containt the number of the cluster associated to the point
+    // n          - number of points in input
+    // dimensions - dimension of the point in input
+    // epochs     - maximum number of iteration of the algorithm
+    // k          - number of cluster to divide the dataset into
+        
     assert(points != NULL);
     assert(clusters != NULL);
     assert(epochs > 0);
@@ -29,9 +40,9 @@ void k_means (double **points,
 
     double centroids[k][point_dimension];
 
-    int n_points[k];
+    int n_points[k]; /* Keeps count of the number of points in each clusters */
 
-    double sum[k][dimensions];
+    double sum[k][dimensions]; /* Used for recalculate the centroids */
 
 
     for (int i = 0; i < k; i++) {
@@ -42,14 +53,11 @@ void k_means (double **points,
         }
     }
 
-    
-    double tstart, elapsed;
-    int boolean = 1;
-    double p_distance, distance;
+    double p_distance, distance; 
     int cluster_num;
 
     #pragma omp parallel
-    for (int t = 0; boolean && t < epochs; t++) {
+    for (int t = 0; t < epochs; t++) {
 
         // Updating the distance of each point with respect to the current centroids
         #pragma omp for private(p_distance, distance, cluster_num) firstprivate(n, k, centroids, dimensions, points)
@@ -64,7 +72,7 @@ void k_means (double **points,
                     cluster_num = j; 
                 }
             }
-
+        
             clusters[i] = cluster_num;
             
             #pragma omp atomic
@@ -76,9 +84,7 @@ void k_means (double **points,
                 sum[cluster_num][j] += points[i][j];
             }
         }
-                
-        boolean = 1;
-    
+
         // Compute new centroids
         #pragma omp for firstprivate(k, dimensions)
         for (int i = 0; i < k; ++i) {
@@ -88,10 +94,7 @@ void k_means (double **points,
             for (int j = 0; j < dimensions; j++) {
                 double prov_sum = sum[i][j]/n_p;
                 sum[i][j] = 0.0;
-                if (centroids[i][j] != prov_sum) { 
-                    boolean = 1;
-                    centroids[i][j] = prov_sum;
-                }    
+                centroids[i][j] = prov_sum;
             }
         }
     }

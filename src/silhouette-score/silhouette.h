@@ -8,6 +8,6 @@
 #include <math.h>
 #include <omp.h>
 
-double silhouette_score (double **points, int *clusters, int n, int dimensions, int k);
+double silhouette_score (double **points, int *clusters, const int n, const int dimensions, const int k);
 
 #endif

@@ -3,7 +3,7 @@
 int point_dim;
 
 
-double manhattan_distance (double *p1, double *p2) {
+double manhattan_distance (const double *p1, const double *p2) {
 
     double distance = 0;
 
@@ -14,7 +14,7 @@ double manhattan_distance (double *p1, double *p2) {
     return distance;
 }
 
-void copy_point (double *src, double *dst) {
+void copy_point (const double *src, double *dst) {
     for (int i = 0; i < point_dim; i++){
         dst[i] = src[i];
     }

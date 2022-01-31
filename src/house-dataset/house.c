@@ -58,7 +58,7 @@ int main (int argc, char const *argv[]) {
     /*
     * K-means
     */
-    int max_iterations = 500;
+    int max_iterations = 200;
     double tstart, elapsed;
 
     // Starting the timer for kmeans
@@ -89,7 +89,7 @@ int main (int argc, char const *argv[]) {
     /*
     * K-medoids
     */
-    // Starting the timer for kmedoids
+    //Starting the timer for kmedoids
     tstart = omp_get_wtime();
     k_medoids(data, clusters, data_size, dimensions, 6);
 
@@ -102,7 +102,6 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf(" %f ", sil);
     printf("%f\n", elapsed);
 
     header = "MedInc,Latitude,Longitude,Cluster\n";
