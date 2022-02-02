@@ -7,18 +7,45 @@ make -C src/house-dataset
 # Keep in mind it will take a lot of time
 # OMP_NUM_THREADS=1 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./src/housing-dataset/out 20641 9 data/housing.csv
 
+CORES=8
+
 EXEC=./src/house-dataset/out
 INPUT_DATA=data/house_pre.csv
-ROWS=20641
 COLS=3
 
-CORES=8
+# Strong Scaling
+
+ROWS=20641
+
+echo "Strong Scaling"
+echo ""
 
 for p in `seq ${CORES}`; do
     echo "Threads: $p"
     echo ""
     for rep in `seq 3`; do 
         OMP_NUM_THREADS=$p ${EXEC} ${ROWS} ${COLS} ${INPUT_DATA}
+        echo "-----------------------------------------------------------"
+    done
+    echo ""
+done
+
+# Weak Scaling
+echo "Weak Scaling"
+echo ""
+
+ROWS=2500 #Baseline 
+#Maximum values reached with 8 CORES: 20.000
+
+for p in `seq ${CORES}`; do
+    echo "Threads: $p"
+    echo ""
+
+    PROB_SIZE=`echo "$(($p * $ROWS))" | bc -l -q` 
+    for rep in `seq 3`; do 
+        echo "$PROB_SIZE"
+        echo ""
+        OMP_NUM_THREADS=$p ${EXEC} ${PROB_SIZE} ${COLS} ${INPUT_DATA}
         echo "-----------------------------------------------------------"
     done
     echo ""
