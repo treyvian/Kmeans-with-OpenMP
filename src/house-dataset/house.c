@@ -41,6 +41,10 @@ int main (int argc, char const *argv[]) {
     // Reading the csv file
 	read_csv(row, col, fname, supp_array);
 
+    /*
+    * After the supp_array is filled with the values from the csv in input
+    * stores in the data array only the columns that needs to be clustered
+    */
     for (int i = 1; i < row; ++i) {
         data[i-1] = (double *)malloc(dimensions * sizeof(double));
         assert(data[i-1] != NULL);
@@ -90,30 +94,32 @@ int main (int argc, char const *argv[]) {
     * K-medoids
     */
     //Starting the timer for kmedoids
-    tstart = omp_get_wtime();
-    k_medoids(data, clusters, data_size, dimensions, 6);
+    // tstart = omp_get_wtime();
+    // k_medoids(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer for kmedoids
-    elapsed = omp_get_wtime() - tstart;
-    printf("Time kmedoids %f ", elapsed);
-    // Starting the timer for silhouette score
-    tstart = omp_get_wtime();
-    double sil = silhouette_score(data, clusters, data_size, dimensions, 6);
+    // // Stopping the timer for kmedoids
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("Time kmedoids %f ", elapsed);
+    // // Starting the timer for silhouette score
+    // tstart = omp_get_wtime();
+    // double sil = silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer for silhouette score
-    elapsed = omp_get_wtime() - tstart;
-    printf("%f\n", elapsed);
+    // // Stopping the timer for silhouette score
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("%f\n", elapsed);
 
-    header = "MedInc,Latitude,Longitude,Cluster\n";
-    filename = "output_housing_kmedoids.csv";
+    // header = "MedInc,Latitude,Longitude,Cluster\n";
+    // filename = "output_housing_kmedoids.csv";
     
-    // Creating the file in output
-    create_marks_csv(data, clusters, data_size, dimensions, filename, header);
+    // // Creating the file in output
+    // create_marks_csv(data, clusters, data_size, dimensions, filename, header);
 
     
     // Freeing memory for the array data
     for (int i=0; i < row; i++) {
         free(supp_array[i]);
+        if (i != (row-1))
+            free(data[i]);
     }
     free(supp_array);
     free(data);

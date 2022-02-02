@@ -6,6 +6,8 @@ make -C src/mall-costumer-dataset
 # For valgrind execution
 # OMP_NUM_THREADS=1 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./src/mall-costumer-dataset/out 201 5 data/Mall_Customers.csv 10 
 
+EXEC=./src/mall-costumer-dataset/out
+INPUT_DATA=data/Mall_Customers.csv
 ROWS=201
 COLS=5
 CLUSTERS=10
@@ -16,7 +18,7 @@ for p in `seq ${CORES}`; do
     echo "Threads: $p"
     echo ""
     for rep in `seq 5`; do 
-        OMP_NUM_THREADS=$p ./src/mall-costumer-dataset/out ${ROWS} ${COLS} data/Mall_Customers.csv ${CLUSTERS}
+        OMP_NUM_THREADS=$p ${EXEC} ${ROWS} ${COLS} ${INPUT_DATA} ${CLUSTERS}
         echo ""
     done
     echo "-----------------------------------------------------------"

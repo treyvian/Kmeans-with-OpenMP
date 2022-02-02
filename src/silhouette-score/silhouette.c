@@ -4,7 +4,6 @@ double euclidian_distance (const double *p1, const double *p2, int dimensions) {
 
     double distance = 0;
 
-
     for (int i = 0; i < dimensions; ++i) {
         distance += pow((p2[i] - p1[i]),2);
     }
@@ -14,6 +13,14 @@ double euclidian_distance (const double *p1, const double *p2, int dimensions) {
 
 
 double silhouette_score (double **data, int *clusters, int n, int dimensions,int k) {
+
+    // 5 arguments
+    // data       - n x dimensions size array containing the data in input
+    // clusters   - n-dimensional array containing the cluster number of the 
+    //              corresponding point
+    // n          - number of points in input
+    // dimensions - dimension of the point in input
+    // k          - number of cluster to divide the dataset into
 
     assert(data != NULL);
     assert(clusters != NULL);
@@ -30,6 +37,10 @@ double silhouette_score (double **data, int *clusters, int n, int dimensions,int
         n_clust[i] = 0; 
     }
 
+    /*
+    * For each point calculates the cohesion and the separation with respect to
+    * all the others points
+    */
     #pragma omp parallel for reduction(+:silhouette_score) private(mean_coh, mean_sep, sep, distance, Cohesion) firstprivate(n, k, separation, n_clust, dimensions) schedule(static)
     for (int i=0; i < n; ++i) {
 

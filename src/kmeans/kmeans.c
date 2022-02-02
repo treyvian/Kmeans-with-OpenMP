@@ -1,11 +1,9 @@
 #include "kmeans.h"
 
-int point_dimension; /* static variable to be used in help methods */
-
 /*
 * Help method to calculate the euclidian distance
 */
-double euclidian_dist (const double *p1, const double *p2) {
+double euclidian_dist (const double *p1, const double *p2, int point_dimension) {
     
     double distance = 0;
 
@@ -25,8 +23,9 @@ void k_means (double **points,
                 const int k) {
 
     // 6 arguments
-    // points     - n x dimensions size array of dimensions: n x dimensions, containing the data in input
-    // clusters   - n-dimensional array of dimension n which at the end of the algorithm will containt the number of the cluster associated to the point
+    // points     - n x dimensions size array contains the data in input
+    // clusters   - n-dimensional array that at the end of the algorithm will
+    //              containts the number of the cluster associated to the point
     // n          - number of points in input
     // dimensions - dimension of the point in input
     // epochs     - maximum number of iteration of the algorithm
@@ -36,9 +35,7 @@ void k_means (double **points,
     assert(clusters != NULL);
     assert(epochs > 0);
 
-    point_dimension = dimensions;
-
-    double centroids[k][point_dimension];
+    double centroids[k][dimensions];
 
     int n_points[k]; /* Keeps count of the number of points in each clusters */
 
@@ -47,7 +44,7 @@ void k_means (double **points,
 
     for (int i = 0; i < k; i++) {
         n_points[i] = 0;
-        for (int j = 0; j < point_dimension; j++){
+        for (int j = 0; j < dimensions; j++){
             centroids[i][j] = points[i][j];
             sum[i][j] = 0.0;
         }
@@ -56,17 +53,21 @@ void k_means (double **points,
     double p_distance, distance; 
     int cluster_num;
 
+    /*
+    * Created the parallel section before the loop in order to avoid the
+    * overhead of recreating the threads every iteration of the for
+    */
     #pragma omp parallel
     for (int t = 0; t < epochs; t++) {
 
         // Updating the distance of each point with respect to the current centroids
-        #pragma omp for private(p_distance, distance, cluster_num) firstprivate(n, k, centroids, dimensions, points)
+        #pragma omp for private(p_distance, distance, cluster_num) firstprivate(n, k, centroids, dimensions, points) schedule(static, 64)
         for (int i = 0; i < n; ++i) {
             p_distance = __DBL_MAX__;
 
             
             for (int j = 0; j < k; ++j) {
-                distance = euclidian_dist(centroids[j], points[i]);
+                distance = euclidian_dist(centroids[j], points[i], dimensions);
                 if (distance < p_distance){
                     p_distance = distance;
                     cluster_num = j; 

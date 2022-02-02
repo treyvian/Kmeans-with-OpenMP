@@ -26,7 +26,7 @@ int main (int argc, char const *argv[]) {
 	char fname[256];	
     strcpy(fname, argv[3]);
 
-    int dimensions = 2;
+    int dimensions = 2; /* dimensions of the points */
 
     // Support array for storing the data from the csv file
     double **supp_array = (double **)malloc(row * sizeof(double *));
@@ -40,6 +40,10 @@ int main (int argc, char const *argv[]) {
     // Reading the csv file
 	read_csv(row, col, fname, supp_array);
 
+    /*
+    * After the supp_array is filled with the values from the csv in input
+    * stores in the data array only the columns that needs to be clustered
+    */
     for (int i = 1; i < row; ++i) {
         data[i-1] = (double *)malloc(dimensions * sizeof(double));
         assert(data[i-1] != NULL);
@@ -51,6 +55,7 @@ int main (int argc, char const *argv[]) {
     int *clusters = (int *)malloc((row - 1) * sizeof(int));
     assert(clusters != NULL);
 
+    /* Number of rows in the data_size dataset */
     const int data_size = row-1;
 
     int n_clusters = atoi(argv[4]);
@@ -134,9 +139,10 @@ int main (int argc, char const *argv[]) {
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);
     
     // Freeing memory for the array data
-        // Freeing memory for the array dat
     for (int i=0; i < row; i++) {
         free(supp_array[i]);
+        if (i != (row-1))
+            free(data[i]);
     }
     free(supp_array);
     free(data);
