@@ -30,8 +30,10 @@ int main (int argc, char const *argv[]) {
 
     // Support array for storing the data from the csv file
     double **supp_array = (double **)malloc(row * sizeof(double *));
+    assert(supp_array != NULL);
 	for (int i = 0; i < row; ++i){
 		supp_array[i] = (double *)malloc(col * sizeof(double));
+        assert(supp_array[i] != NULL);
 	}
 
     double **data = (double **)malloc((row - 1) * sizeof(double *));
@@ -100,8 +102,10 @@ int main (int argc, char const *argv[]) {
 
 
     // Create output csv file for kmeans
-    char *header = "X,Y,Cluster\n";
-    char *filename = "output_mall_kmeans.csv";
+    char header[128];
+    char filename[128];
+    strcpy(header, "X,Y,Cluster\n");
+    strcpy(filename, "output_mall_kmeans.csv");
     
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);
 
@@ -132,8 +136,7 @@ int main (int argc, char const *argv[]) {
     printf("Time kmedoids %f \n", elapsed);
 
     // Create output csv file for kmedoids
-    header = "X,Y,Cluster\n";
-    filename = "output_mall_kmedoids.csv";
+    strcpy(filename, "output_mall_kmedoids.csv");
     
     // Creating the file in output
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);

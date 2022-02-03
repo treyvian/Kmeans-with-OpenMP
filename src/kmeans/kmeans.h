@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <math.h>
 #include <assert.h>
 #include <omp.h>

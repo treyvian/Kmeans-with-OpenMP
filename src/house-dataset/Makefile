@@ -8,19 +8,19 @@ OBJ_FILES = house.o kmeans.o kmedoids.o silhouette.o rw.o
 all: out
 
 out: $(OBJ_FILES)
-	gcc -o out $(OBJ_FILES) -lm -fopenmp -O2
+	gcc -o out $(OBJ_FILES) -lm -fopenmp
 
 house.o:
-	gcc -c house.c -fopenmp -O2 -o house.o 
+	gcc -c house.c -fopenmp -o house.o 
 
 kmeans.o: 
-	gcc -c $(KMEANS)kmeans.c -fopenmp -O2 -o ./kmeans.o
+	gcc -c $(KMEANS)kmeans.c -fopenmp -o ./kmeans.o
 
 kmedoids.o: 
-	gcc -c $(KMEDOIDS)kmedoids.c -fopenmp -O2 -o ./kmedoids.o
+	gcc -c $(KMEDOIDS)kmedoids.c -fopenmp -o ./kmedoids.o
 
 silhouette.o: 
-	gcc -c $(SILHOUETTE)silhouette.c -fopenmp -O2 -o ./silhouette.o
+	gcc -c $(SILHOUETTE)silhouette.c -fopenmp -o ./silhouette.o
 
 rw.o: 
 	gcc -c $(RW)rw.c -O2 -o ./rw.o

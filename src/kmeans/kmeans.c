@@ -76,7 +76,7 @@ void k_means (double **points,
         
             clusters[i] = cluster_num;
             
-            #pragma omp atomic
+            #pragma omp atomic 
             n_points[cluster_num]++;
             
             // Iterate over points to append data to centroids

@@ -113,7 +113,7 @@ void k_medoids (double **points,
             }
             #pragma omp critical
             {
-            clusters[i] = num_clust;
+            clusters[i] = num_clust; /* insert the right cluster number */
             }
         }
     }

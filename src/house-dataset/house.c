@@ -31,8 +31,10 @@ int main (int argc, char const *argv[]) {
 
     // Support array for storing the data from the csv file
     double **supp_array = (double **)malloc(row * sizeof(double *));
+    assert(supp_array != NULL);
 	for (int i = 0; i < row; ++i){
 		supp_array[i] = (double *)malloc(col * sizeof(double));
+        assert(supp_array[i] != NULL);
 	}
 
     double **data = (double **)malloc((row - 1) * sizeof(double *));
@@ -42,8 +44,8 @@ int main (int argc, char const *argv[]) {
 	read_csv(row, col, fname, supp_array);
 
     /*
-    * After the supp_array is filled with the values from the csv in input
-    * stores in the data array only the columns that needs to be clustered
+    * Copy from the supp_array to data array, avoiding copying the first
+    * row of supp_array which corresponds to the header
     */
     for (int i = 1; i < row; ++i) {
         data[i-1] = (double *)malloc(dimensions * sizeof(double));
@@ -71,7 +73,7 @@ int main (int argc, char const *argv[]) {
     
     // Stopping the timer for kmeans
     elapsed = omp_get_wtime() - tstart;
-    printf("Time kmeans %f ", elapsed);
+    printf("Time kmeans %f \n", elapsed);
 
     // //Starting the timer for silhouette score
     tstart = omp_get_wtime();
@@ -79,13 +81,15 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for silhouette score
     elapsed = omp_get_wtime() - tstart;
-    printf("%f\n", elapsed);
+    printf("Time silhouette %f \n", elapsed);
 
+    char header[128];
+    char filename[128];
     // Header of the csv file in output
-    char *header = "MedInc,Latitude,Longitude,Cluster\n";
+    strcpy(header, "MedInc,Latitude,Longitude,Cluster\n");
     
     // Name of the csv file in output
-    char *filename = "output_house_kmeans.csv";
+    strcpy(filename, "output_house_kmeans.csv");
 
     // Creating the file in output
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);    
@@ -99,17 +103,10 @@ int main (int argc, char const *argv[]) {
 
     // Stopping the timer for kmedoids
     elapsed = omp_get_wtime() - tstart;
-    printf("Time kmedoids %f ", elapsed);
+    printf("Time kmedoids %f \n", elapsed);
     // Starting the timer for silhouette score
-    tstart = omp_get_wtime();
-    double sil = silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer for silhouette score
-    elapsed = omp_get_wtime() - tstart;
-    printf("%f\n", elapsed);
-
-    header = "MedInc,Latitude,Longitude,Cluster\n";
-    filename = "output_housing_kmedoids.csv";
+    strcpy(filename, "output_housing_kmedoids.csv");
     
     // Creating the file in output
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);
