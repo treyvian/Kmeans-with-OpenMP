@@ -54,6 +54,8 @@ void k_medoids (double **points,
 
     double total_cost = __DBL_MAX__; /* stores the min cost found */
     double new_total_cost, distance, p_distance;
+
+    // Initialize the parallel region here in order to save overhead later
     #pragma omp parallel firstprivate(n, k, dimensions)
     {
         /*
@@ -67,6 +69,7 @@ void k_medoids (double **points,
             for (int j = 0; j<k; ++j){   
                 new_total_cost = 0;
                 
+                // Copy the point in the medoids array to try the new combination
                 copy_point(points[i], medoids[j], dimensions);
                 
                 for (int t = 0; t < n; ++t) {
@@ -83,6 +86,7 @@ void k_medoids (double **points,
                     new_total_cost += p_distance;
                 }
 
+                // If the new combination has lower cost save the point in the best_medoids array
                 if (total_cost > new_total_cost) {
                     #pragma omp critical
                     {

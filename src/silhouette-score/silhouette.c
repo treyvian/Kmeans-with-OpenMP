@@ -46,6 +46,7 @@ double silhouette_score (double **data, int *clusters, int n, int dimensions,int
 
         Cohesion = 0;
 
+        // Find cohesion and separation of each point in the cluster w.r.t. the i-th point
         for (int j = 0; j < n; ++j) {
             if (i != j) {           
                 distance = euclidian_distance(data[i], data[j], dimensions);

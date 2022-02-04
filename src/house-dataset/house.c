@@ -91,7 +91,7 @@ int main (int argc, char const *argv[]) {
     // Name of the csv file in output
     strcpy(filename, "output_house_kmeans.csv");
 
-    // Creating the file in output
+    // Creating the file in output for k-means method
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);    
 
     /*
@@ -108,7 +108,7 @@ int main (int argc, char const *argv[]) {
 
     strcpy(filename, "output_housing_kmedoids.csv");
     
-    // Creating the file in output
+    // Creating the file in output for k-medoids method
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);
 
     
