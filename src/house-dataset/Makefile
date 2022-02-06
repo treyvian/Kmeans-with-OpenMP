@@ -11,7 +11,7 @@ out: $(OBJ_FILES)
 	gcc -o out $(OBJ_FILES) -lm -fopenmp
 
 house.o:
-	gcc -c house.c -fopenmp -o house.o 
+	gcc -c house.c -fopenmp -O2 -o house.o 
 
 kmeans.o: 
 	gcc -c $(KMEANS)kmeans.c -fopenmp -o ./kmeans.o

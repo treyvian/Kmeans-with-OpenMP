@@ -26,24 +26,24 @@ for p in `seq ${CORES}`; do
     echo ""
 done
 
-# Weak Scaling
-echo "Weak Scaling"
-echo ""
+# # Weak Scaling
+# echo "Weak Scaling"
+# echo ""
 
-MIN_ROWS=2500 #Baseline 
-#Maximum values reached with 8 CORES: 20.000
+# MIN_ROWS=2500 #Baseline 
+# #Maximum values reached with 8 CORES: 20.000
 
-for p in `seq ${CORES}`; do
-    echo "Threads: $p"
-    echo ""
+# for p in `seq ${CORES}`; do
+#     echo "Threads: $p"
+#     echo ""
 
-    PROB_SIZE=`echo "$(($p * $MIN_ROWS))"` 
-    echo "Number of rows: ${PROB_SIZE}"
-    for rep in `seq 3`; do 
-        OMP_NUM_THREADS=$p $EXEC $PROB_SIZE $COLS $INPUT_DATA
-        echo "-----------------------------------------------------------"
-    done
-    echo ""
-done
+#     PROB_SIZE=`echo "$(($p * $MIN_ROWS))"` 
+#     echo "Number of rows: ${PROB_SIZE}"
+#     for rep in `seq 3`; do 
+#         OMP_NUM_THREADS=$p $EXEC $PROB_SIZE $COLS $INPUT_DATA
+#         echo "-----------------------------------------------------------"
+#     done
+#     echo ""
+# done
 
 make clean -C src/house-dataset

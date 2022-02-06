@@ -1,9 +1,11 @@
 #include "kmeans.h"
 
+int point_dimension;
+
 /*
 * Help method to calculate the euclidian distance
 */
-double euclidian_dist (const double *p1, const double *p2, int point_dimension) {
+double euclidian_dist (const double *p1, const double *p2) {
     
     double distance = 0;
 
@@ -35,16 +37,16 @@ void k_means (double **points,
     assert(clusters != NULL);
     assert(epochs > 0);
 
-    double centroids[k][dimensions];
+    point_dimension = dimensions;
 
+    double centroids[k][point_dimension];
     int n_points[k]; /* Keeps count of the number of points in each clusters */
-
     double sum[k][dimensions]; /* Used for recalculate the centroids */
 
 
     for (int i = 0; i < k; i++) {
         n_points[i] = 0;
-        for (int j = 0; j < dimensions; j++){
+        for (int j = 0; j < point_dimension; j++){
             centroids[i][j] = points[i][j];
             sum[i][j] = 0.0;
         }
@@ -67,7 +69,7 @@ void k_means (double **points,
 
             
             for (int j = 0; j < k; ++j) {
-                distance = euclidian_dist(centroids[j], points[i], dimensions);
+                distance = euclidian_dist(centroids[j], points[i]);
                 if (distance < p_distance){
                     p_distance = distance;
                     cluster_num = j; 

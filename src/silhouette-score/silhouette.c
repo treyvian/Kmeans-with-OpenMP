@@ -1,10 +1,12 @@
 #include "silhouette.h"
 
-double euclidian_distance (const double *p1, const double *p2, int dimensions) {
+int dimensions_point;
+
+double euclidian_distance (const double *p1, const double *p2) {
 
     double distance = 0;
 
-    for (int i = 0; i < dimensions; ++i) {
+    for (int i = 0; i < dimensions_point; ++i) {
         distance += pow((p2[i] - p1[i]),2);
     }
     
@@ -26,6 +28,7 @@ double silhouette_score (double **data, int *clusters, int n, int dimensions,int
     assert(clusters != NULL);
 
     double silhouette_score = 0;
+    dimensions_point = dimensions;
 
     double mean_coh, mean_sep, sep, distance, Cohesion;
 
@@ -49,7 +52,7 @@ double silhouette_score (double **data, int *clusters, int n, int dimensions,int
         // Find cohesion and separation of each point in the cluster w.r.t. the i-th point
         for (int j = 0; j < n; ++j) {
             if (i != j) {           
-                distance = euclidian_distance(data[i], data[j], dimensions);
+                distance = euclidian_distance(data[i], data[j]);
                 
                 if (clusters[i] == clusters[j]) {
                     Cohesion += distance;
