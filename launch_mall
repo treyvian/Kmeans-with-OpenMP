@@ -9,7 +9,7 @@ ROWS=201
 COLS=5
 CLUSTERS=10
 
-CORES=8
+CORES=6
 
 for p in `seq ${CORES}`; do
     echo "Threads: $p"

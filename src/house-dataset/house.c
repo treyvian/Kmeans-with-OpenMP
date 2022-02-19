@@ -64,6 +64,7 @@ int main (int argc, char const *argv[]) {
     /*
     * K-means
     */
+
     int max_iterations = 200;
     double tstart, elapsed;
 
@@ -97,19 +98,20 @@ int main (int argc, char const *argv[]) {
     /*
     * K-medoids
     */
-    // Starting the timer for kmedoids
-    tstart = omp_get_wtime();
-    k_medoids(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer for kmedoids
-    elapsed = omp_get_wtime() - tstart;
-    printf("Time kmedoids %f \n", elapsed);
-    // Starting the timer for silhouette score
+    // // Starting the timer for kmedoids
+    // tstart = omp_get_wtime();
+    // k_medoids(data, clusters, data_size, dimensions, 6);
 
-    strcpy(filename, "output_housing_kmedoids.csv");
+    // // Stopping the timer for kmedoids
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("Time kmedoids %f \n", elapsed);
+    // // Starting the timer for silhouette score
+
+    // strcpy(filename, "output_housing_kmedoids.csv");
     
-    // Creating the file in output for k-medoids method
-    create_marks_csv(data, clusters, data_size, dimensions, filename, header);
+    // // Creating the file in output for k-medoids method
+    // create_marks_csv(data, clusters, data_size, dimensions, filename, header);
 
     
     // Freeing memory for the array data
