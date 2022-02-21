@@ -77,12 +77,12 @@ int main (int argc, char const *argv[]) {
     printf("Time kmeans %f \n", elapsed);
 
     // //Starting the timer for silhouette score
-    tstart = omp_get_wtime();
-    silhouette_score(data, clusters, data_size, dimensions, 6);
+    // tstart = omp_get_wtime();
+    // silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // Stopping the timer for silhouette score
-    elapsed = omp_get_wtime() - tstart;
-    printf("Time silhouette %f \n", elapsed);
+    // // Stopping the timer for silhouette score
+    // elapsed = omp_get_wtime() - tstart;
+    // printf("Time silhouette %f \n", elapsed);
 
     char header[128];
     char filename[128];

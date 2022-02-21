@@ -27,8 +27,7 @@ void compute_distance(int tID,
   int start = tID * length_per_thread;
   int end = start + length_per_thread;
 
-  if (end > points_size)
-  {
+  if (end > points_size) {
     end = points_size;
     length_per_thread = start - end;
   }
@@ -36,12 +35,13 @@ void compute_distance(int tID,
   double min_distance;
   int min_index;
 
+  double tstart, elapsed;
   for (int i = start; i < end; i++) {
-
     double *point = points[i];
     min_distance = __DBL_MAX__;
     min_index = 0;
 
+    
     for (int j = 0; j < clusters_size; j++) {
       double distance = euclidean_dist(point, centroids[j]);
 
@@ -50,38 +50,46 @@ void compute_distance(int tID,
         min_index = j;
       }
     }
-    
     clusters[i] = min_index;
 
-    #pragma omp atomic
-    num_points_cluster[min_index]++;
-    
-    #pragma omp critical
-    {  
-      for (int j = 0; j < point_dimension; j++) {
-        sum_points[min_index][j] += point[j];
-      }
+    num_points_cluster[min_index + tID]++;
+
+    for (int j = 0; j < point_dimension; j++) {
+      sum_points[min_index + tID][j] += point[j];
     }
   }
 }
 
-int update_clusters(double **centroids, 
+int update_clusters(double **centroids,
                     int *num_point_clusters, 
                     double **sum_points) {
 
   int conv = 0;
 
-  for(int i = 0; i < clusters_size; i++){
-    for (int j = 0; j < point_dimension; j++){
-      double new_value = sum_points[i][j]/(double)num_point_clusters[i];
-      if(centroids[i][j] != new_value) {
-        centroids[i][j] = new_value;
-        conv = 1; 
-      } 
-      sum_points[i][j] = 0;
+  double new_value;
+  double sum[clusters_size][point_dimension];
+  int num_points[clusters_size];
+
+  for (int i = 0; i < clusters_size; i++) {
+    for (int j = 0; j < num_threads; j++) {
+      
+      num_points[i] += num_point_clusters[i+j];
+      num_point_clusters[i+j] = 0;
+
+      for (int k = 0; k < point_dimension; k++) {  
+
+        sum[i][k] += sum_points[i + j][k];
+        sum_points[i + j][k] = 0;
+
+        new_value = sum[i][k]/(double)num_points[i];
+        
+        if(centroids[i][k] != new_value) {
+          centroids[i][k] = new_value;
+          conv = 1; 
+        } 
+      }
     }
-    num_point_clusters[i] = 0;
-  }     
+  }
 
   return conv;
 }
@@ -106,22 +114,29 @@ void k_means (double **points,
   assert(clusters != NULL);
   assert(epochs > 0);
 
-  num_threads = omp_get_num_threads();
-
   point_dimension = dimensions;
   points_size = n;
   clusters_size = k;
+  num_threads = omp_get_max_threads();
 
   double **centroids = (double **)malloc(clusters_size * sizeof(double*));
   assert(centroids);
-  int *num_point_clusters = (int *)calloc(clusters_size, sizeof(int));
-  double **sum_points = (double **)malloc(clusters_size * sizeof(double *));
+
+  int *num_point_clusters;
+  num_point_clusters = (int *)calloc(clusters_size * num_threads, sizeof(int));
+  assert(num_point_clusters);
+
+  double **sum_points;
+  sum_points = (double **)malloc(clusters_size * num_threads * sizeof(double *));
+  assert(sum_points);
 
   for (int i = 0; i < k; i++) {
+    for(int j = 0; j < num_threads; j++) {
+      sum_points[i+j] = (double *)calloc(point_dimension, sizeof(double));
+      assert(sum_points[i+j]);
+    }
     centroids[i] = (double *)malloc(point_dimension * sizeof(double));
     assert(centroids[i]);
-    sum_points[i] = (double *)calloc(point_dimension, sizeof(double));
-    assert(sum_points[i]);
     for (int j = 0; j < point_dimension; j++){ 
       centroids[i][j] = points[i][j];
     }
@@ -131,25 +146,22 @@ void k_means (double **points,
   int iterations = 0;
 
   while(conv && iterations < epochs){
-
     #pragma omp parallel
     {
       int tID = omp_get_thread_num();
       compute_distance(tID, points, centroids, clusters, num_point_clusters, sum_points);
-    
-      #pragma omp barrier
-
-      #pragma omp task
-      iterations ++;
-
-      #pragma omp master
-      conv = update_clusters(centroids, num_point_clusters, sum_points);
     }
+
+    iterations ++;
+
+    conv = update_clusters(centroids, num_point_clusters, sum_points);
   }
 
   for (int i = 0; i < k; i++){
     free(centroids[i]);
-    free(sum_points[i]);
+    for (int j = 0; j < num_threads; j++) {
+      free(sum_points[i+j]);
+    }
   }
   free(centroids);
   free(num_point_clusters);
