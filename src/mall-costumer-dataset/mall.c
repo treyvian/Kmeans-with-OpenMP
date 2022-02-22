@@ -75,7 +75,6 @@ int main (int argc, char const *argv[]) {
     for (int i = 2; i < (n_clusters + 1); i++) {
         k_means(data, clusters, data_size, dimensions, max_iterations, i);
         sil_score = silhouette_score(data, clusters, data_size, dimensions, i);
-        printf("%.3f ", sil_score);
         if (best_silhouette < sil_score) {
             best_silhouette = sil_score;
             best_cluster = i;
@@ -115,33 +114,33 @@ int main (int argc, char const *argv[]) {
     * K-medoids
     */
 
-    // best_silhouette = -1;
-    // best_cluster = -1;
+    best_silhouette = -1;
+    best_cluster = -1;
 
-    // for (int i = 2; i < (n_clusters + 1); i++) {
-    //     k_medoids(data, clusters, data_size, dimensions, i);
-    //     sil_score = silhouette_score(data, clusters, data_size, dimensions, i);
-    //     if (best_silhouette < sil_score) {
-    //         best_silhouette = sil_score;
-    //         best_cluster = i;
-    //     }
-    // }
+    for (int i = 2; i < (n_clusters + 1); i++) {
+        k_medoids(data, clusters, data_size, dimensions, i);
+        sil_score = silhouette_score(data, clusters, data_size, dimensions, i);
+        if (best_silhouette < sil_score) {
+            best_silhouette = sil_score;
+            best_cluster = i;
+        }
+    }
 
-    // assert(best_cluster != -1);
+    assert(best_cluster != -1);
     
-    // // Starting the timer for kmedoids
-    // tstart = omp_get_wtime();
-    // k_medoids(data, clusters, data_size, dimensions, best_cluster);
+    // Starting the timer for kmedoids
+    tstart = omp_get_wtime();
+    k_medoids(data, clusters, data_size, dimensions, best_cluster);
 
-    // // Stopping the timer for kmedoids
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("Time kmedoids %f \n", elapsed);
+    // Stopping the timer for kmedoids
+    elapsed = omp_get_wtime() - tstart;
+    printf("Time kmedoids %f \n", elapsed);
 
-    // // Create output csv file for kmedoids
-    // strcpy(filename, "output_mall_kmedoids.csv");
+    // Create output csv file for kmedoids
+    strcpy(filename, "output_mall_kmedoids.csv");
     
-    // // Creating the file in output
-    // create_marks_csv(data, clusters, data_size, dimensions, filename, header);
+    // Creating the file in output
+    create_marks_csv(data, clusters, data_size, dimensions, filename, header);
     
     // Freeing memory for the array data
     for (int i=0; i < row; i++) {

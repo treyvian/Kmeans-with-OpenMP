@@ -61,6 +61,7 @@ int main (int argc, char const *argv[]) {
 
     const int data_size = row-1;
 
+
     /*
     * K-means
     */
@@ -76,13 +77,13 @@ int main (int argc, char const *argv[]) {
     elapsed = omp_get_wtime() - tstart;
     printf("Time kmeans %f \n", elapsed);
 
-    // //Starting the timer for silhouette score
-    // tstart = omp_get_wtime();
-    // silhouette_score(data, clusters, data_size, dimensions, 6);
+    //Starting the timer for silhouette score
+    tstart = omp_get_wtime();
+    silhouette_score(data, clusters, data_size, dimensions, 6);
 
-    // // Stopping the timer for silhouette score
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("Time silhouette %f \n", elapsed);
+    // Stopping the timer for silhouette score
+    elapsed = omp_get_wtime() - tstart;
+    printf("Time silhouette %f \n", elapsed);
 
     char header[128];
     char filename[128];
@@ -95,23 +96,24 @@ int main (int argc, char const *argv[]) {
     // Creating the file in output for k-means method
     create_marks_csv(data, clusters, data_size, dimensions, filename, header);    
 
+
     /*
     * K-medoids
     */
 
-    // // Starting the timer for kmedoids
-    // tstart = omp_get_wtime();
-    // k_medoids(data, clusters, data_size, dimensions, 6);
+    // Starting the timer for kmedoids
+    tstart = omp_get_wtime();
+    k_medoids(data, clusters, data_size, dimensions, 6);
 
-    // // Stopping the timer for kmedoids
-    // elapsed = omp_get_wtime() - tstart;
-    // printf("Time kmedoids %f \n", elapsed);
-    // // Starting the timer for silhouette score
+    // Stopping the timer for kmedoids
+    elapsed = omp_get_wtime() - tstart;
+    printf("Time kmedoids %f \n", elapsed);
+    // Starting the timer for silhouette score
 
-    // strcpy(filename, "output_housing_kmedoids.csv");
+    strcpy(filename, "output_housing_kmedoids.csv");
     
-    // // Creating the file in output for k-medoids method
-    // create_marks_csv(data, clusters, data_size, dimensions, filename, header);
+    // Creating the file in output for k-medoids method
+    create_marks_csv(data, clusters, data_size, dimensions, filename, header);
 
     
     // Freeing memory for the array data
