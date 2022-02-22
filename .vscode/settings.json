@@ -2,5 +2,6 @@
     "files.associations": {
         "chrono": "c",
         "iterator": "c"
-    }
+    },
+    "cSpell.words": []
 }

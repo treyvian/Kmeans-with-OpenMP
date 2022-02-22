@@ -8,10 +8,10 @@ OBJ_FILES = house.o kmeans.o kmedoids.o silhouette.o rw.o
 all: out
 
 out: $(OBJ_FILES)
-	gcc -o out $(OBJ_FILES) -lm -fopenmp
+	gcc -o out $(OBJ_FILES) -lm -fopenmp -O3
 
 house.o:
-	gcc -c house.c -fopenmp -O2 -o house.o 
+	gcc -c house.c -fopenmp -O3 -o house.o 
 
 kmeans.o: 
 	gcc -c $(KMEANS)kmeans.c -fopenmp -o ./kmeans.o
@@ -23,7 +23,7 @@ silhouette.o:
 	gcc -c $(SILHOUETTE)silhouette.c -fopenmp -o ./silhouette.o
 
 rw.o: 
-	gcc -c $(RW)rw.c -O2 -o ./rw.o
+	gcc -c $(RW)rw.c -O3 -o ./rw.o
 
 
 clean:
